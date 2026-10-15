@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Walking network for osm2pgrouting (the bundled pedestrian config is malformed). Same highway types as osm-extract.py. -->
+<configuration>
+  <tag_name name="highway" id="1">
+    <tag_value name="footway" id="101" priority="1.0" maxspeed="5" />
+    <tag_value name="pedestrian" id="102" priority="1.0" maxspeed="5" />
+    <tag_value name="path" id="103" priority="1.0" maxspeed="5" />
+    <tag_value name="steps" id="104" priority="1.0" maxspeed="5" />
+    <tag_value name="living_street" id="105" priority="1.0" maxspeed="5" />
+    <tag_value name="residential" id="106" priority="1.0" maxspeed="5" />
+    <tag_value name="service" id="107" priority="1.0" maxspeed="5" />
+    <tag_value name="unclassified" id="108" priority="1.0" maxspeed="5" />
+    <tag_value name="tertiary" id="109" priority="1.0" maxspeed="5" />
+    <tag_value name="tertiary_link" id="110" priority="1.0" maxspeed="5" />
+    <tag_value name="secondary" id="111" priority="1.0" maxspeed="5" />
+    <tag_value name="secondary_link" id="112" priority="1.0" maxspeed="5" />
+    <tag_value name="primary" id="113" priority="1.0" maxspeed="5" />
+    <tag_value name="primary_link" id="114" priority="1.0" maxspeed="5" />
+    <tag_value name="track" id="115" priority="1.0" maxspeed="5" />
+    <tag_value name="corridor" id="116" priority="1.0" maxspeed="5" />
+    <tag_value name="cycleway" id="117" priority="1.0" maxspeed="5" />
+  </tag_name>
+</configuration>

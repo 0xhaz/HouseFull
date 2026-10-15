@@ -1,0 +1,11 @@
+{
+  "results": {
+    "tags": [
+      {
+        "id": "urn:tag:synthetic:live_music_venue",
+        "name": "Live Music Venue",
+        "type": "urn:tag:category"
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": ["NODE_ENV", "DEMO_MODE"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "env": ["DATABASE_URL"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "@housefull/web#typecheck": {
+      "dependsOn": ["^build", "build"]
+    }
+  },
+  "globalPassThroughEnv": [
+    "CLERK_SECRET_KEY",
+    "CLICK_SALT",
+    "QLOO_API_KEY",
+    "QLOO_API_URL",
+    "QLOO_DAILY_BUDGET",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "UPSTASH_REDIS_REST_URL"
+  ]
+}

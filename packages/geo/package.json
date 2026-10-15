@@ -1,0 +1,27 @@
+{
+  "name": "@housefull/geo",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ngeohash": "0.6.4"
+  },
+  "devDependencies": {
+    "@types/ngeohash": "0.6.8",
+    "typescript": "7.0.2",
+    "vitest": "5.0.4"
+  }
+}

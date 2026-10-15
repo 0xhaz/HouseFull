@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "results": {
+    "entities": [
+      {
+        "entity_id": "SYN-ARTIST-0002",
+        "name": "Fixture Collective",
+        "type": "urn:entity",
+        "subtype": "urn:entity:artist",
+        "popularity": 0.62,
+        "query": { "affinity": 0.91 }
+      },
+      {
+        "entity_id": "SYN-ARTIST-0003",
+        "name": "Mock Orchestra",
+        "type": "urn:entity",
+        "subtype": "urn:entity:artist",
+        "popularity": 0.44,
+        "query": { "affinity": 0.87 }
+      }
+    ]
+  },
+  "duration": 120
+}

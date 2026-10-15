@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+.turbo/
+coverage/
+
+# env (only the example is committed)
+.env
+.env.*
+!.env.example
+
+# internal planning and discussion notes (not part of the submission)
+docs/
+
+# local reference app (not ours to publish)
+real-estate-prod-master/
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# tests
+playwright-report/
+test-results/
+
+# os / editor
+.DS_Store
+.idea/
+*.log
+
+# Qloo response data must never be published (Qloo hackathon terms).
+# Real fixtures live in data/fixtures/ locally and in the private DB `fixtures` table.
+data/fixtures/*
+!data/fixtures/.gitkeep
+!data/fixtures/README.md
+data/boundaries/cache/
+
+# OpenStreetMap downloads and extracts (ODbL; never published)
+data/osm/

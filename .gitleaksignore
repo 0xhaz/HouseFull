@@ -1,0 +1,2 @@
+# False positive: the empty QLOO_API_KEY= line in .env.example (the rule reads into the next line).
+.env.example:generic-api-key:5

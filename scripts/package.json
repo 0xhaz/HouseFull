@@ -1,0 +1,22 @@
+{
+  "name": "@housefull/scripts",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "baselines": "node --env-file-if-exists=../.env --env-file-if-exists=../.env.local build-baselines.ts"
+  },
+  "dependencies": {
+    "@housefull/db": "workspace:*",
+    "@housefull/geo": "workspace:*",
+    "@housefull/qloo-client": "workspace:*",
+    "@upstash/redis": "1.39.0",
+    "drizzle-orm": "0.45.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

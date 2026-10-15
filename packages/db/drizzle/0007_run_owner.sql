@@ -1,0 +1,2 @@
+ALTER TABLE "runs" ADD COLUMN "workspace_id" uuid;--> statement-breakpoint
+ALTER TABLE "runs" ADD CONSTRAINT "runs_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE cascade ON UPDATE no action;

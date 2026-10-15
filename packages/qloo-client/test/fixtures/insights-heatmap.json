@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "results": {
+    "heatmap": [
+      {
+        "location": { "latitude": 40.7193, "longitude": -73.9389, "geohash": "dr5rtwc" },
+        "query": { "affinity": 0.93, "affinity_rank": 0.9, "popularity": 0.71 }
+      },
+      {
+        "location": { "latitude": 40.7081, "longitude": -73.9571, "geohash": "dr5rsnp" },
+        "query": { "affinity": 0.88, "affinity_rank": 0.84, "popularity": 0.8 }
+      }
+    ]
+  }
+}

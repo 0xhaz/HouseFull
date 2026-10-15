@@ -1,0 +1,43 @@
+{
+  "name": "housefull",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=@housefull/web --filter=@housefull/api",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "prepare": "simple-git-hooks",
+    "probe:qloo": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/qloo-probe.ts",
+    "db:start": "supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor",
+    "db:stop": "supabase stop",
+    "db:migrate": "pnpm --filter @housefull/db migrate",
+    "import:boundaries": "pnpm --filter @housefull/db import:boundaries",
+    "import:nyc": "pnpm --filter @housefull/db import:nyc",
+    "baselines": "pnpm --filter @housefull/scripts baselines",
+    "seed:demo": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-demo.ts",
+    "dev:all": "turbo run dev --concurrency=20",
+    "test:local": "pnpm --filter @housefull/web test:local"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "turbo": "2.11.7",
+    "typescript": "7.0.2",
+    "lint-staged": "17.6.0",
+    "simple-git-hooks": "2.14.0",
+    "@types/node": "24.19.2"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "sh scripts/pre-commit.sh"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css}": "biome check --write --no-errors-on-unmatched"
+  }
+}

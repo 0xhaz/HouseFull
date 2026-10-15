@@ -1,0 +1,1 @@
+ALTER TABLE "baseline_cells" ADD COLUMN "popularity" real;

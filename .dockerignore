@@ -1,0 +1,15 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+.git
+.env
+.env.*
+data/fixtures
+data/boundaries/cache
+real-estate-prod-master
+apps/web/public/vendor
+apps/web/test-results
+apps/web/playwright-report

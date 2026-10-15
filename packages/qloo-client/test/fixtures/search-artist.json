@@ -1,0 +1,10 @@
+{
+  "results": [
+    {
+      "entity_id": "SYN-ARTIST-0001",
+      "name": "The Synthetic Band",
+      "types": ["urn:entity:artist"],
+      "popularity": 0.81
+    }
+  ]
+}
