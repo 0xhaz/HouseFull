@@ -66,7 +66,7 @@ export function AskPanel() {
   };
 
   return (
-    <section aria-labelledby="ask-heading" className="rounded-xl border bg-card p-4 sm:p-5">
+    <section aria-labelledby="ask-heading" className="rounded-2xl border bg-card p-4 sm:p-5">
       <h2 id="ask-heading" className="flex items-center gap-2 font-medium">
         <SparklesIcon className="size-4 text-primary" aria-hidden />
         Ask your workspace

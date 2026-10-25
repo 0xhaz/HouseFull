@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { heroPill } from '@/components/page-hero';
 
-/** Overview, new campaign and (for real organizations) team members. */
+/** Overview, planning, outreach and (for real organizations) team members, as pills on the hero. */
 export function WorkspaceNav({ slug, isDemo }: { slug: string; isDemo: boolean }) {
   const path = usePathname();
   const items = [
@@ -14,7 +14,10 @@ export function WorkspaceNav({ slug, isDemo }: { slug: string; isDemo: boolean }
     ...(isDemo ? [] : [{ href: `/w/${slug}/members`, label: 'Team' }]),
   ];
   return (
-    <nav aria-label="Workspace" className="mt-5 flex gap-1 overflow-x-auto border-b">
+    <nav
+      aria-label="Workspace"
+      className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]"
+    >
       {items.map((i) => {
         const active = path === i.href;
         return (
@@ -22,12 +25,7 @@ export function WorkspaceNav({ slug, isDemo }: { slug: string; isDemo: boolean }
             key={i.href}
             href={i.href}
             aria-current={active ? 'page' : undefined}
-            className={cn(
-              '-mb-px border-b-2 px-3 py-2 text-sm whitespace-nowrap transition-colors',
-              active
-                ? 'border-primary font-medium text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground',
-            )}
+            className={heroPill(active)}
           >
             {i.label}
           </Link>

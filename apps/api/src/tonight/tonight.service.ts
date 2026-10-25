@@ -1,3 +1,4 @@
+import { contactDetails, hoursOn } from '@housefull/agent';
 import { type Db, runs } from '@housefull/db';
 import { alertsFor, isSuspension, subwayAlerts } from '@housefull/disruptions';
 import { Ticketmaster, type TmEvent } from '@housefull/events';
@@ -5,12 +6,20 @@ import type { CallContext, QlooClient } from '@housefull/qloo-client';
 import {
   type CampaignBrief,
   CITY_META,
+  CITY_TZ,
   type City,
+  isTheatre,
   type LikedArtist,
+  localDate,
+  type SpotKind,
+  sceneOf,
   type TonightEvent,
   type TonightResult,
+  type TonightSpot,
+  type TonightSpots,
   type TonightWhen,
   tonightWindow,
+  venueTypeOf,
 } from '@housefull/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
@@ -22,6 +31,8 @@ import { DbGeoStore } from '../runs/geo-store.js';
 const RADIUS_KM: Record<City, number> = { nyc: 20, nola: 15, la: 40 };
 /** Taste scoring resolves at most this many acts on Qloo (search results are cached). */
 const MAX_TASTE = 40;
+/** Walking-and-short-ride distance for spots around the center. */
+const SPOT_RADIUS_M: Record<City, number> = { nyc: 7000, nola: 5000, la: 15000 };
 const MAX_TRANSIT = 25;
 const SHOW_HOURS = 4;
 const DROP = new Set(['cancelled', 'postponed', 'offsale']);
@@ -66,6 +77,8 @@ export class TonightService {
 
     let events = dedupe(r.events)
       .filter((e) => !DROP.has(e.status ?? ''))
+      // Live music in bars, clubs and venues; theatre and classical are out of scope for now.
+      .filter((e) => !isTheatre({ name: e.name, genres: e.genres ?? [] }))
       // Over: started more than a show's length ago.
       .filter((e) => !e.startsAt || Date.parse(e.startsAt) + SHOW_HOURS * 3_600_000 > now.getTime())
       .map(toTonight);
@@ -82,6 +95,101 @@ export class TonightService {
       ...(transit?.has(e.id) ? { transit: transit.get(e.id) } : {}),
     }));
     return { city, window, available: true, tasteUsed: Boolean(taste?.size), events };
+  }
+
+  /**
+   * Places with live music to walk into tonight: jazz and blues clubs, then pubs and bars that
+   * Qloo tags with live music. Ranked by the visitor's taste when they gave likes.
+   */
+  async spots(
+    city: City,
+    likes: LikedArtist[],
+    ctx: CallContext,
+    now = new Date(),
+  ): Promise<TonightSpots> {
+    const date = localDate(CITY_TZ[city], now);
+    const [lng, lat] = CITY_META[city].center;
+    const near = {
+      location: `POINT(${lng} ${lat})`,
+      locationRadius: SPOT_RADIUS_M[city],
+    };
+    const signal = likes.length ? { entities: likes.map((l) => l.id) } : undefined;
+    const query = (kind: SpotKind, tags: string[], intersection: boolean) =>
+      this.qloo
+        .insights(
+          {
+            filterType: 'urn:entity:place',
+            filter: { ...near, tags },
+            signal,
+            take: 12,
+            ...(intersection ? { extra: { 'operator.filter.tags': 'intersection' } } : {}),
+          },
+          ctx,
+        )
+        .then((r) => (r.data.results.entities ?? []).map((e) => ({ kind, e })))
+        .catch((err: Error) => {
+          this.logger.warn(`spots (${kind}) skipped: ${err.message}`);
+          return [];
+        });
+    const found = (
+      await Promise.all([
+        query(
+          'jazz',
+          ['urn:tag:category:place:jazz_club', 'urn:tag:category:place:blues_club'],
+          false,
+        ),
+        query('pub', ['urn:tag:category:place:pub', 'urn:tag:amenity:qloo:live_music'], true),
+        query('bar', ['urn:tag:category:place:bar', 'urn:tag:amenity:qloo:live_music'], true),
+      ])
+    ).flat();
+    if (!found.length) return { city, date, available: false, spots: [] };
+
+    const taste = signal
+      ? tasteScores(
+          found.map(({ e }) => ({
+            id: e.entity_id,
+            affinity: e.query?.affinity ?? 0,
+            popularity: e.popularity ?? 0,
+          })),
+        )
+      : undefined;
+    const seen = new Set<string>();
+    const spots: TonightSpot[] = [];
+    for (const { kind, e } of found) {
+      if (seen.has(e.entity_id)) continue; // jazz first, so a jazz bar stays a jazz club
+      seen.add(e.entity_id);
+      const p = e.properties ?? {};
+      const contact = contactDetails(p, (e as { external?: unknown }).external);
+      const image = (p.image as { url?: string } | undefined)?.url;
+      spots.push({
+        id: e.entity_id,
+        name: e.name,
+        kind,
+        address: contact.address,
+        lat: e.location?.lat,
+        lng: e.location?.lon,
+        image,
+        rating:
+          typeof p.business_rating === 'number'
+            ? Math.round(p.business_rating * 10) / 10
+            : undefined,
+        priceLevel: typeof p.price_level === 'number' ? p.price_level : undefined,
+        hours: hoursOn(e, date),
+        website: contact.website,
+        phone: contact.phone,
+        mapsUrl: contact.mapsUrl,
+        taste: taste?.get(e.entity_id),
+      });
+    }
+    // Open tonight first (unknown hours in between), then taste or rating.
+    const openRank = (s: TonightSpot) => (s.hours === 'closed' ? 2 : s.hours ? 0 : 1);
+    spots.sort(
+      (a, b) =>
+        openRank(a) - openRank(b) ||
+        (b.taste ?? 0) - (a.taste ?? 0) ||
+        (b.rating ?? 0) - (a.rating ?? 0),
+    );
+    return { city, date, available: true, spots: spots.slice(0, 24) };
   }
 
   /**
@@ -261,6 +369,8 @@ function toTonight(e: TmEvent): TonightEvent {
     startsAt: e.startsAt,
     url: e.url,
     genres: e.genres ?? [],
+    scene: sceneOf(e.genres ?? []),
+    venueType: venueTypeOf(e.venue),
     image: e.image,
     priceFrom: e.priceFrom,
     status: e.status,

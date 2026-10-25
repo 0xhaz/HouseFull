@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('tonight: live listings, taste matching, location stays local', async ({ browser }) => {
+test('tonight: gig guide, jazz clubs, taste picks, location stays local', async ({ browser }) => {
   const ctx = await browser.newContext({
     geolocation: { latitude: 40.7223, longitude: -73.9874 },
     permissions: ['geolocation'],
@@ -12,22 +12,37 @@ test('tonight: live listings, taste matching, location stays local', async ({ br
   await page.goto('/');
   await page.getByRole('link', { name: /See what.s on tonight/ }).click();
   await expect(page).toHaveURL(/\/tonight/);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Tonight in');
+
+  // Walk-in spots: jazz clubs, pubs and bars with live music, from Qloo.
+  const spots = page.getByRole('list', { name: 'Live-music spots' });
+  await expect(spots.getByRole('listitem').first()).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Jazz & blues', exact: true }).click();
+  await expect(spots).toContainText('Jazz & blues club');
+
   await page.getByRole('tab', { name: 'Next 7 days' }).click();
-  const shows = page.getByRole('list', { name: 'Shows' });
-  await expect(shows.getByRole('listitem').first()).toBeVisible({ timeout: 60_000 });
+  const lineup = page.getByRole('heading', { name: 'The lineup' });
+  await expect(lineup).toBeVisible();
+  // Theatre and musicals are out.
+  await expect(page.getByText(/musical/i)).toHaveCount(0);
 
   await page.getByLabel(/Artists you like/).fill('Clairo');
   await page
     .getByRole('list', { name: 'Matching artists' })
     .getByRole('button', { name: 'Clairo', exact: true })
     .click();
-  await expect(page.getByRole('button', { name: 'Best match' })).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByRole('heading', { name: 'Top picks for you' })).toBeVisible({
+    timeout: 120_000,
+  });
   await expect(
-    shows.getByText(/Top match for your taste|An artist you like/).first(),
+    page
+      .getByRole('list', { name: 'Top picks' })
+      .getByText(/Top match|You like them/)
+      .first(),
   ).toBeVisible();
 
-  await page.getByRole('button', { name: 'Use my location' }).click();
-  await expect(shows.getByText(/(m|km) away/).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Near me' }).click();
+  await expect(page.getByRole('button', { name: 'Using your location' })).toBeVisible();
   // Coordinates never leave the browser.
   expect(sent.some((u) => u.includes('40.722') || u.includes('-73.987'))).toBe(false);
 

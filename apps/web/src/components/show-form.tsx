@@ -135,14 +135,14 @@ export function ShowForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Plan your own show</CardTitle>
+        <CardTitle className="text-xl font-bold tracking-tight">Plan your own show</CardTitle>
         <CardDescription>
           Any artist Qloo knows, any venue in {CITY_META[city].name}. A fresh plan takes about 40
           seconds.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="relative mb-5 flex flex-col gap-1.5">
+      <CardContent className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.8fr)] lg:items-start">
+        <div className="relative flex flex-col gap-1.5 lg:border-r lg:pr-6">
           <Label htmlFor={ids.tm}>Find it on Ticketmaster</Label>
           <Input
             id={ids.tm}
@@ -176,7 +176,11 @@ export function ShowForm() {
               ))}
             </ul>
           )}
-          <p className="text-xs text-muted-foreground">Or fill in the details below.</p>
+          <p className="text-xs text-muted-foreground">
+            Fills in the artist, venue and date for you.
+            <span className="lg:hidden"> Or fill in the details below.</span>
+            <span className="hidden lg:inline"> Or fill in the details yourself.</span>
+          </p>
         </div>
         <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">

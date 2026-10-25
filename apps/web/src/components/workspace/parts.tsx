@@ -16,9 +16,9 @@ const weekdayFmt = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone
 
 export function Stat({ label, value, hint }: { label: string; value: ReactNode; hint?: string }) {
   return (
-    <div className="rounded-xl border bg-card p-4">
+    <div className="rounded-2xl border bg-card p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
+      <p className="mt-1 text-3xl font-extrabold tracking-tight tabular-nums">{value}</p>
       {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
@@ -43,7 +43,7 @@ export function Section({
     <Card className="min-w-0">
       <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="text-lg font-bold tracking-tight">{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </div>
         {action}
@@ -74,7 +74,7 @@ export function EmptyRuns({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed p-6">
+    <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed p-6">
       <p className="text-sm text-muted-foreground">{children}</p>
       <PlanShowButton slug={slug} city={city} />
     </div>

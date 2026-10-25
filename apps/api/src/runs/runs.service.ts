@@ -57,7 +57,7 @@ export class RunsService {
   }
 
   /**
-   * Presets reuse the latest finished run for the same show (within PRESET_REUSE_HOURS):
+   * Presets reuse the latest finished run for the same show (within PRESET_REUSE_HOURS, default 30 days):
    * judges get the result in seconds and Qloo/Gemini budgets stay intact. The stream
    * replays the recorded event log, so the steps still play back.
    */
@@ -67,7 +67,8 @@ export class RunsService {
     opts: { preset?: boolean; fresh?: boolean; workspaceId?: string } = {},
   ) {
     if (opts.preset && !opts.fresh) {
-      const hours = Number(process.env.PRESET_REUSE_HOURS || 24);
+      // Long enough to cover judging: presets replay instantly unless asked for a fresh run.
+      const hours = Number(process.env.PRESET_REUSE_HOURS || 24 * 30);
       const [hit] = await this.db
         .select({ id: runs.id })
         .from(runs)
@@ -82,7 +83,13 @@ export class RunsService {
             gt(runs.createdAt, new Date(Date.now() - hours * 3_600_000)),
           ),
         )
-        .orderBy(desc(runs.createdAt))
+        // The richest demo first: a run re-planned from results shows the whole loop.
+        .orderBy(
+          desc(
+            sql`exists (select 1 from brief_versions v where v.run_id = ${runs.id} and v.version > 1)`,
+          ),
+          desc(runs.createdAt),
+        )
         .limit(1);
       if (hit) return { runId: hit.id, reused: true };
     }

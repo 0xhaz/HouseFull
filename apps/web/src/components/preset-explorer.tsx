@@ -84,7 +84,7 @@ export function PresetExplorer({ presets }: { presets: PresetShow[] }) {
           </Card>
         ))}
       </div>
-      <div className="h-[360px] lg:h-[520px]">
+      <div className="h-[360px] lg:h-auto lg:min-h-[340px]">
         <BaseMap center={center} zoom={meta.zoom} pins={pins} />
       </div>
     </div>

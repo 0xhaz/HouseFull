@@ -21,8 +21,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { Accent, HeroGlow, heroPill } from '@/components/page-hero';
 import { Button } from '@/components/ui/button';
 import { PERSONA_ICONS } from '@/components/workspace/persona-icons';
+import { cn } from '@/lib/utils';
 
 export function SectionHeading({
   id,
@@ -37,8 +39,8 @@ export function SectionHeading({
 }) {
   return (
     <div className="max-w-2xl">
-      <p className="text-sm font-medium text-primary">{eyebrow}</p>
-      <h2 id={id} className="mt-1 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+      <p className="text-sm font-semibold tracking-wide text-primary uppercase">{eyebrow}</p>
+      <h2 id={id} className="mt-1 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
         {title}
       </h2>
       {children && <p className="mt-3 text-muted-foreground text-pretty">{children}</p>}
@@ -75,7 +77,7 @@ export function Problem() {
       </SectionHeading>
       <ul className="grid gap-4 md:grid-cols-3">
         {points.map((p) => (
-          <li key={p.title} className="rounded-xl border bg-card p-5">
+          <li key={p.title} className="rounded-2xl border bg-card p-5">
             <p className="font-medium">{p.title}</p>
             <p className="mt-2 text-sm text-muted-foreground text-pretty">{p.body}</p>
           </li>
@@ -124,7 +126,7 @@ export function HowItWorks() {
       </SectionHeading>
       <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {STEPS.map((s, i) => (
-          <li key={s.title} className="relative flex flex-col rounded-xl border bg-card p-5">
+          <li key={s.title} className="relative flex flex-col rounded-2xl border bg-card p-5">
             <div className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-lg bg-primary/10 text-primary">
                 <s.icon className="size-4.5" aria-hidden />
@@ -207,7 +209,7 @@ export function Personas() {
         {PERSONAS.map((p) => {
           const Icon = PERSONA_ICONS[p.key];
           return (
-            <article key={p.key} className="flex flex-col rounded-xl border bg-card p-5">
+            <article key={p.key} className="flex flex-col rounded-2xl border bg-card p-5">
               <p className="flex items-center gap-2 text-sm font-medium text-primary">
                 <Icon className="size-4" aria-hidden />
                 {p.who}
@@ -387,27 +389,24 @@ export function FinalCta() {
   return (
     <section
       aria-labelledby="start"
-      className="flex flex-col items-start gap-4 rounded-2xl bg-primary p-6 text-primary-foreground sm:flex-row sm:items-center sm:justify-between sm:p-8"
+      className="relative isolate flex flex-col items-start gap-5 overflow-hidden rounded-3xl bg-zinc-950 p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-10"
     >
+      <HeroGlow />
       <div className="max-w-xl">
-        <h2 id="start" className="text-2xl font-semibold tracking-tight text-balance">
-          Set up a workspace for your team
+        <h2 id="start" className="text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
+          Set up a workspace for <Accent>your team</Accent>
         </h2>
-        <p className="mt-2 text-primary-foreground/85 text-pretty">
+        <p className="mt-2 text-white/70 text-pretty">
           Pick promoter, venue or artist team, invite your colleagues, and plan your first show.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button asChild variant="secondary">
-          <Link href="/sign-up">Start your workspace</Link>
-        </Button>
-        <Button
-          asChild
-          variant="ghost"
-          className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-        >
-          <Link href="#demo-workspaces">See the demos</Link>
-        </Button>
+        <Link href="/sign-up" className={heroPill(true)}>
+          Start your workspace
+        </Link>
+        <Link href="#demo-workspaces" className={heroPill(false)}>
+          See the demos
+        </Link>
       </div>
     </section>
   );
@@ -423,43 +422,49 @@ export function ForFans() {
     },
     {
       icon: MapPinnedIcon,
-      title: 'Near you, starting soon',
-      body: 'Live countdowns, distance from where you are (your location never leaves your browser), tickets and directions in one tap.',
+      title: 'Jazz clubs, pubs and small rooms',
+      body: 'Gigs plus the bars and clubs known for live music, open now or opening soon, with directions in one tap. Your location never leaves your browser.',
     },
     {
       icon: TrainFrontIcon,
       title: 'Know before you go',
-      body: 'In New York, live subway alerts on the lines near each venue, so a delay doesn’t cost you the opener.',
+      body: 'In New York, live subway alerts on the lines near tonight’s venues, so a delay doesn’t cost you the opener.',
     },
   ];
   return (
     <section
       aria-labelledby="fans"
-      className="grid gap-8 rounded-2xl border p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]"
+      className="relative isolate grid gap-8 overflow-hidden rounded-3xl bg-zinc-950 p-6 text-white sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]"
     >
+      <HeroGlow />
       <div>
-        <SectionHeading id="fans" eyebrow="For fans" title="Going out tonight?">
+        <p className="text-sm font-semibold tracking-wide text-primary uppercase">For fans</p>
+        <h2
+          id="fans"
+          className="mt-1 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl"
+        >
+          Going out <Accent>tonight?</Accent>
+        </h2>
+        <p className="mt-3 text-white/70 text-pretty">
           The same taste graph works from the other side. Tonight shows what&apos;s on in the city,
           ranked for you. When a promoter is running a HouseFull campaign for fans like you, the
           show is marked as promoted, so the right people hear about it and you always know why
           it&apos;s there.
-        </SectionHeading>
-        <Button asChild className="mt-5">
-          <Link href="/tonight">
-            See what&apos;s on tonight
-            <ArrowRightIcon />
-          </Link>
-        </Button>
+        </p>
+        <Link href="/tonight" className={cn(heroPill(true), 'mt-5')}>
+          See what&apos;s on tonight
+          <ArrowRightIcon className="size-4" />
+        </Link>
       </div>
       <ul className="grid gap-5">
         {points.map((p) => (
           <li key={p.title} className="flex gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-              <p.icon className="size-4.5" aria-hidden />
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/10 text-white ring-1 ring-white/15">
+              <p.icon className="size-5" aria-hidden />
             </span>
             <div>
-              <p className="font-medium">{p.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground text-pretty">{p.body}</p>
+              <p className="font-semibold">{p.title}</p>
+              <p className="mt-1 text-sm text-white/70 text-pretty">{p.body}</p>
             </div>
           </li>
         ))}

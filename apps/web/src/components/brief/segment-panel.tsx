@@ -8,6 +8,7 @@ import { LiftLegend, LiftMap } from '@/components/map/lift-map';
 import { VisitorMap } from '@/components/map/visitor-map';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { keyed } from '@/lib/keys';
 import { cn } from '@/lib/utils';
 
 function Sourced({ count }: { count: number }) {
@@ -97,8 +98,8 @@ export function SegmentPanel({ brief }: { brief: CampaignBrief }) {
       )}
 
       <div className="grid gap-4 md:grid-cols-3">
-        {seg.copy.map((c, i) => (
-          <Card key={`${seg.id}-${c.headline}`}>
+        {keyed(seg.copy, (c) => `${seg.id}-${c.headline}`).map(([key, c], i) => (
+          <Card key={key}>
             <CardHeader>
               <CardDescription>Ad variant {String.fromCharCode(65 + i)}</CardDescription>
               <CardTitle className="text-base">{c.headline}</CardTitle>

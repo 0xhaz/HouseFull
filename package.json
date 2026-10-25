@@ -8,7 +8,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "turbo run dev --filter=@housefull/web --filter=@housefull/api",
+    "dev": "node scripts/check-node.mjs && turbo run dev --filter=@housefull/web --filter=@housefull/api",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
@@ -22,8 +22,9 @@
     "import:boundaries": "pnpm --filter @housefull/db import:boundaries",
     "import:nyc": "pnpm --filter @housefull/db import:nyc",
     "baselines": "pnpm --filter @housefull/scripts baselines",
+    "demo:check": "node scripts/demo-preflight.mjs",
     "seed:demo": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-demo.ts",
-    "dev:all": "turbo run dev --concurrency=20",
+    "dev:all": "node scripts/check-node.mjs && turbo run dev --concurrency=20",
     "test:local": "pnpm --filter @housefull/web test:local"
   },
   "devDependencies": {

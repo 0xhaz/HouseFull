@@ -37,6 +37,13 @@ export class TonightController {
     return this.tonight.tonight(q.city, q.when, q.likes, { ipHash: dailyIpHash(ip) });
   }
 
+  /** Jazz clubs, pubs and bars with live music, ranked by taste when `likes` are given. */
+  @Get('spots')
+  @Throttle({ default: { limit: 120, ttl: 60 * 60 * 1000 } })
+  spots(@Query(new ZodPipe(TonightQuery)) q: z.infer<typeof TonightQuery>, @Ip() ip: string) {
+    return this.tonight.spots(q.city, q.likes, { ipHash: dailyIpHash(ip) });
+  }
+
   /** Artist picker for "artists you like" (Qloo search). */
   @Get('artists')
   @Throttle({ default: { limit: 120, ttl: 60 * 60 * 1000 } })

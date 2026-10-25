@@ -14,9 +14,10 @@ test('outreach: contacts from briefs, a grounded draft, status kept', async ({ p
   await first.getByRole('button', { name: 'Write email' }).click();
   await page.getByRole('button', { name: 'Draft the email' }).click();
   const body = page.getByLabel('Message');
-  await expect(body).not.toHaveValue('', { timeout: 60_000 });
+  await expect(body).not.toHaveValue('', { timeout: 120_000 });
   const text = await body.inputValue();
   expect(text).toContain('[Your name]');
+  expect(text).not.toContain('\\n');
   // Never leaks sales numbers to outside contacts.
   expect(text).not.toMatch(/\d+\s?%|sold/i);
   await expect(page.getByRole('link', { name: 'Open in email app' })).toHaveAttribute(

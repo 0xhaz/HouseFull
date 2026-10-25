@@ -21,7 +21,7 @@ export async function DemoWorkspaces() {
           <li key={w.slug}>
             <Link
               href={`/w/${w.slug}`}
-              className="group flex h-full flex-col gap-2 rounded-xl border bg-card p-4 transition-colors hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="group flex h-full flex-col gap-2 rounded-2xl border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <span className="flex items-center gap-2 text-sm font-medium text-primary">
                 <Icon className="size-4" aria-hidden />

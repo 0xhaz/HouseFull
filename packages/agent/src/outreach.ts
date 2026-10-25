@@ -206,7 +206,13 @@ export async function draftOutreach(
  * Models often return the email as one block. Restore a real layout: greeting line, short
  * paragraphs, then the sign-off on its own lines. Bodies that already have line breaks pass.
  */
-export function emailLayout(body: string): string {
+export function emailLayout(raw: string): string {
+  // Models sometimes write line breaks as the two characters "\n".
+  const body = raw
+    .replace(/\\n/g, '\n')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
   if (body.includes('\n')) return body;
   let text = body;
   let greeting = '';

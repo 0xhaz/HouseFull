@@ -124,7 +124,7 @@ export function OutreachBoard() {
     );
   if (!contacts.length)
     return (
-      <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+      <p className="rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
         No contacts yet. Plan a show: its brief finds the places, acts and podcasts worth reaching.
       </p>
     );
@@ -214,7 +214,7 @@ function ContactCard({
 }) {
   const host = c.website ? hostOf(c.website) : undefined;
   return (
-    <li className="flex flex-col gap-3 rounded-xl border bg-card p-4">
+    <li className="flex flex-col gap-3 rounded-2xl border bg-card p-4">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-semibold leading-snug">{c.name}</p>

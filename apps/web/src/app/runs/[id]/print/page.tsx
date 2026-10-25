@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { PrintButton } from '@/components/print-button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ApiError, asReplan, getVersion, getVersions } from '@/lib/api';
+import { keyed } from '@/lib/keys';
 
 export const metadata: Metadata = { title: 'Campaign brief (print)' };
 
@@ -115,8 +116,8 @@ async function Printable({ params, searchParams }: PageProps<'/runs/[id]/print'>
       <section className="break-inside-avoid border-t pt-4">
         <h2 className="font-semibold">Countdown</h2>
         <ul className="list-disc pl-5">
-          {b.schedule.map((s) => (
-            <li key={`${s.daysOut}-${s.action}`}>
+          {keyed(b.schedule, (s) => `${s.daysOut}-${s.action}`).map(([key, s]) => (
+            <li key={key}>
               <strong>{s.daysOut} days out:</strong> {s.action}
             </li>
           ))}
@@ -125,13 +126,15 @@ async function Printable({ params, searchParams }: PageProps<'/runs/[id]/print'>
           <>
             <h2 className="mt-3 font-semibold">Show night</h2>
             <ul className="list-disc pl-5">
-              {b.disruptions?.map((d) => (
-                <li key={`${d.source.recordId}-${d.title}`}>
-                  {d.title}: {d.effect}
-                </li>
-              ))}
-              {b.conflicts.map((c) => (
-                <li key={`${c.name}-${c.venue}`}>
+              {keyed(b.disruptions ?? [], (d) => `${d.source.recordId}-${d.title}`).map(
+                ([key, d]) => (
+                  <li key={key}>
+                    {d.title}: {d.effect}
+                  </li>
+                ),
+              )}
+              {keyed(b.conflicts, (c) => `${c.name}-${c.venue}-${c.time}`).map(([key, c]) => (
+                <li key={key}>
                   Competing show: {c.name} at {c.venue} {c.time}
                 </li>
               ))}

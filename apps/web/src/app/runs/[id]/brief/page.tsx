@@ -38,14 +38,21 @@ async function Brief({ params, searchParams }: PageProps<'/runs/[id]/brief'>) {
 
 export default function Page(props: PageProps<'/runs/[id]/brief'>) {
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
+    <main className="flex-1">
       <Suspense
         fallback={
-          <div className="flex flex-col gap-6">
-            <Skeleton className="h-16 w-2/3" />
-            <Skeleton className="h-40" />
-            <Skeleton className="h-96" />
-          </div>
+          <>
+            <div className="bg-zinc-950">
+              <div className="mx-auto grid max-w-6xl gap-4 px-4 py-10">
+                <Skeleton className="h-6 w-48 bg-white/10" />
+                <Skeleton className="h-10 w-2/3 bg-white/10" />
+              </div>
+            </div>
+            <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8">
+              <Skeleton className="h-40" />
+              <Skeleton className="h-96" />
+            </div>
+          </>
         }
       >
         <Brief {...props} />

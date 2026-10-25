@@ -1,5 +1,6 @@
 import type { CampaignBrief } from '@housefull/shared';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { keyed } from '@/lib/keys';
 
 export function ScheduleList({ brief }: { brief: CampaignBrief }) {
   const segName = (id: string) =>
@@ -13,8 +14,8 @@ export function ScheduleList({ brief }: { brief: CampaignBrief }) {
         </CardHeader>
         <CardContent>
           <ol className="relative flex flex-col gap-4 border-l pl-6">
-            {brief.schedule.map((s) => (
-              <li key={`${s.daysOut}-${s.action}`} className="relative text-sm">
+            {keyed(brief.schedule, (s) => `${s.daysOut}-${s.action}`).map(([key, s]) => (
+              <li key={key} className="relative text-sm">
                 <span className="absolute top-0 -left-[34px] grid size-5 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground tabular-nums">
                   {s.daysOut}
                 </span>
@@ -32,8 +33,8 @@ export function ScheduleList({ brief }: { brief: CampaignBrief }) {
             <div className="mt-6 rounded-md border border-dashed p-3 text-sm">
               <p className="font-medium">Same-night conflicts</p>
               <ul className="text-muted-foreground">
-                {brief.conflicts.map((c) => (
-                  <li key={`${c.name}-${c.venue}`}>
+                {keyed(brief.conflicts, (c) => `${c.name}-${c.venue}-${c.time}`).map(([key, c]) => (
+                  <li key={key}>
                     {c.name} at {c.venue} {c.time && `(${c.time})`}
                   </li>
                 ))}

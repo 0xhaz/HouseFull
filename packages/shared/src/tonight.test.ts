@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tonightWindow } from './tonight.js';
+import { isTheatre, sceneOf, tonightWindow, venueTypeOf } from './tonight.js';
 
 // 2026-10-14 is a Wednesday.
 const at = (iso: string) => new Date(iso);
@@ -39,5 +39,34 @@ describe('tonightWindow', () => {
       to: '2026-10-15',
     });
     expect(tonightWindow('nola', 'week', now)).toEqual({ from: '2026-10-14', to: '2026-10-20' });
+  });
+});
+
+describe('scenes, rooms and theatre', () => {
+  it('maps Ticketmaster genres to scenes', () => {
+    expect(sceneOf(['Jazz'])).toBe('jazz');
+    expect(sceneOf(['Pop', 'Electro Pop'])).toBe('pop');
+    expect(sceneOf(['Alternative', 'Indie Rock'])).toBe('indie');
+    expect(sceneOf(['Hip-Hop/Rap'])).toBe('hiphop');
+    expect(sceneOf(['Folk', 'Americana'])).toBe('folk');
+    expect(sceneOf([])).toBe('other');
+  });
+
+  it('reads the room from the venue name', () => {
+    expect(venueTypeOf('Birdland Theater')).toBe('jazz');
+    expect(venueTypeOf("Lucinda's")).toBe('venue');
+    expect(venueTypeOf('Bowery Ballroom')).toBe('hall');
+    expect(venueTypeOf('Madison Square Garden')).toBe('arena');
+    expect(venueTypeOf('Pete’s Candy Store Bar')).toBe('bar');
+    expect(venueTypeOf('Zone One at Elsewhere')).toBe('club');
+    expect(venueTypeOf('Brooklyn Bowl')).toBe('club');
+    expect(venueTypeOf('Barclays Center')).toBe('arena');
+    expect(venueTypeOf('Lehman Center for the Performing Arts')).toBe('hall');
+  });
+
+  it('drops theatre and musicals, keeps concerts in theatres', () => {
+    expect(isTheatre({ name: 'Lost Boys Musical', genres: [] })).toBe(true);
+    expect(isTheatre({ name: 'Hamilton', genres: ['Theatre'] })).toBe(true);
+    expect(isTheatre({ name: 'Sylvan Esso', genres: ['Electronic'] })).toBe(false);
   });
 });

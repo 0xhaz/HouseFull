@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import { Accent, PageHero } from '@/components/page-hero';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -29,14 +30,6 @@ async function Compare({ params }: PageProps<'/runs/[id]/compare'>) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header>
-        <p className="text-sm text-muted-foreground">Same show, same question, same model</p>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">With and without Qloo</h1>
-        <p className="mt-2 max-w-2xl text-pretty text-muted-foreground">
-          Left: HouseFull&apos;s brief, built from Qloo&apos;s taste graph, with every claim linked
-          to the call it came from. Right: the same model asked the same question with no data.
-        </p>
-      </header>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="border-primary/40">
           <CardHeader>
@@ -100,10 +93,22 @@ async function Compare({ params }: PageProps<'/runs/[id]/compare'>) {
 
 export default function Page(props: PageProps<'/runs/[id]/compare'>) {
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
-      <Suspense fallback={<Skeleton className="h-96" />}>
-        <Compare {...props} />
-      </Suspense>
+    <main className="flex-1">
+      <PageHero
+        size="sm"
+        eyebrow="Same show, same question, same model"
+        title={
+          <>
+            With and without <Accent>Qloo</Accent>
+          </>
+        }
+        description="Left: HouseFull’s brief, built from Qloo’s taste graph, with every claim linked to the call it came from. Right: the same model asked the same question with no data."
+      />
+      <div className="mx-auto w-full max-w-6xl px-4 py-8">
+        <Suspense fallback={<Skeleton className="h-96" />}>
+          <Compare {...props} />
+        </Suspense>
+      </div>
     </main>
   );
 }

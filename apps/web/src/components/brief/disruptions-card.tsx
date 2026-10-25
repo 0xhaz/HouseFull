@@ -2,6 +2,7 @@ import type { CampaignBrief } from '@housefull/shared';
 import { AlertTriangleIcon, ConstructionIcon, InfoIcon, TrainFrontIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { keyed } from '@/lib/keys';
 import { cn } from '@/lib/utils';
 
 const ICON = {
@@ -33,10 +34,10 @@ export function DisruptionsCard({ brief }: { brief: CampaignBrief }) {
           </p>
         ) : (
           <ul className="flex flex-col gap-4 text-sm">
-            {list.map((d) => {
+            {keyed(list, (d) => `${d.kind}-${d.source.recordId}-${d.title}`).map(([key, d]) => {
               const Icon = ICON[d.kind];
               return (
-                <li key={`${d.kind}-${d.source.recordId}-${d.title}`} className="flex gap-3">
+                <li key={key} className="flex gap-3">
                   <Icon
                     className={cn(
                       'mt-0.5 size-4 shrink-0',

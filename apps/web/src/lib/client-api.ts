@@ -9,6 +9,7 @@ import type {
   OutreachUpdate,
   ShowInput,
   TonightResult,
+  TonightSpots,
   TonightWhen,
   Workspace,
 } from '@housefull/shared';
@@ -143,4 +144,11 @@ export const saveOutreachStatus = (
   send<{ ok: true }>(
     `/workspaces/${encodeURIComponent(slug)}/outreach/${encodeURIComponent(entityId)}`,
     { method: 'PUT', headers: authed(token), body: JSON.stringify(body) },
+  );
+export const getTonightSpots = (city: string, likes: LikedArtist[]) =>
+  send<TonightSpots>(
+    `/tonight/spots?${new URLSearchParams({
+      city,
+      ...(likes.length ? { likes: JSON.stringify(likes) } : {}),
+    })}`,
   );

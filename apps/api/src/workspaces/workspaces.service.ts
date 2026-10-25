@@ -140,7 +140,7 @@ export class WorkspacesService implements OnModuleInit {
   }
 
   /**
-   * Runs as dashboard rows, newest first, one per show (the latest finished run wins).
+   * Runs as dashboard rows, one per show: finished first, then re-planned (the full loop), then newest.
    * Demo workspaces also see the finished runs that match their profile.
    */
   async overview(ws: Workspace): Promise<WorkspaceOverview> {
@@ -176,7 +176,9 @@ export class WorkspacesService implements OnModuleInit {
         select distinct on (r.input->>'artist', r.input->'venue'->>'name', r.input->>'date') r.id, r.status, r.created_at, r.input, r.brief,
           case when bool_or(l.role = 'owner') over (partition by r.id) then 'owner' else 'shared' end as role
         from linked l join runs r on r.id = l.id
-        order by r.input->>'artist', r.input->'venue'->>'name', r.input->>'date', (r.status = 'done') desc, r.created_at desc
+        order by r.input->>'artist', r.input->'venue'->>'name', r.input->>'date', (r.status = 'done') desc,
+          exists (select 1 from brief_versions v where v.run_id = r.id and v.version > 1) desc,
+          r.created_at desc
       )
       select p.*,
         (select max(version) from brief_versions v where v.run_id = p.id) as version,

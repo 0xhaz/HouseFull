@@ -1,6 +1,6 @@
 import { type Db, runEvents } from '@housefull/db';
 import type { RunEvent } from '@housefull/shared';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDb } from '../db/db.module.js';
 
 /**
@@ -9,7 +9,8 @@ import { InjectDb } from '../db/db.module.js';
  */
 @Injectable()
 export class RunEventLog {
-  private readonly runs = new Map<string, { seq: number; chain: Promise<void> }>();
+  private readonly logger = new Logger(RunEventLog.name);
+  private readonly runs = new Map<string, { seq: number; chain: Promise<void>; gone?: boolean }>();
 
   constructor(@InjectDb() private readonly db: Db) {}
 
@@ -21,12 +22,20 @@ export class RunEventLog {
     const run = this.runs.get(runId);
     if (!run) return;
     const seq = ++run.seq;
-    run.chain = run.chain.then(() =>
-      this.db
-        .insert(runEvents)
-        .values({ runId, seq, event })
-        .then(() => {}),
-    );
+    // A failed write must never reject the chain: nothing awaits it until close(), and an
+    // unhandled rejection takes the whole API down. The usual cause is the run being deleted
+    // mid-flight (its workspace was removed); stop writing for it then.
+    run.chain = run.chain.then(async () => {
+      if (run.gone) return;
+      try {
+        await this.db.insert(runEvents).values({ runId, seq, event });
+      } catch (e) {
+        run.gone = true;
+        this.logger.warn(
+          `run ${runId}: event log write failed, dropping the rest (${(e as Error).message.split('\n')[0]})`,
+        );
+      }
+    });
   }
 
   /** Waits for every pending write, then forgets the run. */

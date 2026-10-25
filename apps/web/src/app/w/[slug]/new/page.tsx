@@ -17,7 +17,7 @@ async function Planner({ params }: { params: PageProps<'/w/[slug]/new'>['params'
   return (
     <div className="grid gap-8">
       {presets.length > 0 && <PresetExplorer presets={presets} />}
-      <div className="max-w-3xl">
+      <div>
         <ShowForm key={profile.venue?.name ?? profile.artist ?? 'show'} />
       </div>
     </div>

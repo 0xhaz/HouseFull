@@ -141,6 +141,12 @@ describe('emailLayout', () => {
     expect(out.split('\n\n').length).toBeGreaterThanOrEqual(4);
   });
 
+  it('turns literal \\n sequences into real line breaks', () => {
+    expect(emailLayout('Hi team,\n\n\\n\\nHello.\\n\\nThanks,\\n[Your name]')).toBe(
+      'Hi team,\n\nHello.\n\nThanks,\n[Your name]',
+    );
+  });
+
   it('leaves formatted emails alone', () => {
     expect(emailLayout('Hi,\n\nHello.')).toBe('Hi,\n\nHello.');
   });
