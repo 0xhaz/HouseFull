@@ -101,8 +101,10 @@ export function FlowDiagram({ showcase }: { showcase?: Showcase }) {
                 {i > 0 && (
                   <span
                     aria-hidden
+                    // Edge to edge: from the previous box (56px wide, centered; 12px grid gap)
+                    // to this one, with 6px of air on each side.
                     className={cn(
-                      'absolute top-7 right-1/2 hidden h-0.5 w-full -translate-y-1/2 sm:block',
+                      'absolute top-9 right-[calc(50%+34px)] left-[calc(-50%+22px)] hidden h-0.5 -translate-y-1/2 sm:block',
                       done || active ? 'bg-primary' : 'bg-border',
                     )}
                   >
@@ -123,7 +125,7 @@ export function FlowDiagram({ showcase }: { showcase?: Showcase }) {
                       active
                         ? 'scale-110 border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30'
                         : done
-                          ? 'border-primary/50 bg-primary/10 text-primary'
+                          ? 'border-primary/50 bg-card text-primary'
                           : 'border-border bg-card text-muted-foreground group-hover:border-primary/50',
                     )}
                   >
