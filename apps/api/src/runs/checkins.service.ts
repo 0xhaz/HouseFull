@@ -26,12 +26,14 @@ import { and, desc, eq, sql } from 'drizzle-orm';
 import { InjectDb } from '../db/db.module.js';
 import { adExportCsv, buildAdExport } from './ads.js';
 import { RunsService } from './runs.service.js';
+import { SurveysService } from './surveys.service.js';
 
 @Injectable()
 export class CheckinsService {
   constructor(
     @InjectDb() private readonly db: Db,
     private readonly runs: RunsService,
+    private readonly surveys: SurveysService,
   ) {}
 
   /** Latest brief version for a finished run. */
@@ -129,10 +131,14 @@ export class CheckinsService {
     if (run.status !== 'done')
       throw new ConflictException('The run must finish before it can be re-planned');
     const { version, brief } = await this.latest(runId);
-    const board = await this.scoreboard(runId);
+    const [board, survey] = await Promise.all([
+      this.scoreboard(runId),
+      this.surveys.summary(runId),
+    ]);
     try {
       const deps = this.runs.agentDeps(runId, run.ipHash ?? undefined, () => {});
-      const out = await replan(brief, version, board, deps, { force });
+      // Post-show satisfaction can save an audience that ads alone would pause.
+      const out = await replan(brief, version, board, deps, { force, survey });
       if (board.sample) out.result.summary = `[Sample data] ${out.result.summary}`;
       await this.db.transaction(async (tx) => {
         await tx.insert(briefVersions).values({

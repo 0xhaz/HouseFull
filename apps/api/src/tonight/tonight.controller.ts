@@ -1,9 +1,16 @@
-import { CitySchema, LikedArtistSchema, TonightWhenSchema } from '@housefull/shared';
-import { Controller, Get, Ip, Query, UseGuards } from '@nestjs/common';
+import {
+  CitySchema,
+  LikedArtistSchema,
+  type TonightRating,
+  TonightRatingSchema,
+  TonightWhenSchema,
+} from '@housefull/shared';
+import { Body, Controller, Get, Ip, Post, Query, UseGuards } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { z } from 'zod';
 import { dailyIpHash } from '../common/ip.js';
 import { ZodPipe } from '../common/zod.pipe.js';
+import { SurveysService } from '../runs/surveys.service.js';
 import { TonightService } from './tonight.service.js';
 
 /** `likes` is a JSON array of {id, name} picked from /tonight/artists (max 5). */
@@ -28,7 +35,20 @@ const ArtistQuery = z.object({ q: z.string().trim().min(2).max(80) });
 @Controller('tonight')
 @UseGuards(ThrottlerGuard)
 export class TonightController {
-  constructor(private readonly tonight: TonightService) {}
+  constructor(
+    private readonly tonight: TonightService,
+    private readonly surveys: SurveysService,
+  ) {}
+
+  /**
+   * A fan shares their rating of a show with its organizer (opt-in on the page). Stored only
+   * if HouseFull planned that show; anonymous either way.
+   */
+  @Post('ratings')
+  @Throttle({ default: { limit: 30, ttl: 60 * 60 * 1000 } })
+  rate(@Body(new ZodPipe(TonightRatingSchema)) body: TonightRating) {
+    return this.surveys.fromTonight(body);
+  }
 
   /** What's on in the city: soonest first, with taste scores when `likes` are given. */
   @Get()

@@ -1,5 +1,5 @@
 import type { Scoreboard, ScoredSegment } from '@housefull/feedback';
-import type { CampaignBrief, Claim, ReplanResult, Segment } from '@housefull/shared';
+import type { CampaignBrief, Claim, ReplanResult, Segment, SurveySummary } from '@housefull/shared';
 import { CampaignBriefSchema } from '@housefull/shared';
 import { verifyClaims } from './brief/critic.js';
 import { factsFrom, writeTemplate, writeWithLlm } from './brief/writer.js';
@@ -10,11 +10,23 @@ import { segmentReach } from './segment.js';
 
 export class NotReadyForReplan extends Error {}
 
+function lovedBy(survey: SurveySummary | undefined, segmentId: string) {
+  const s = survey?.bySegment.find((x) => x.segmentId === segmentId);
+  return s &&
+    s.responses >= LOVED.minResponses &&
+    (s.avgRating ?? 0) >= LOVED.rating &&
+    (s.wouldReturnPct ?? 0) >= LOVED.returnPct
+    ? s
+    : undefined;
+}
+
 /** Drop a segment only when it's this many times worse than the winner. */
 const DROP_RATIO = 3;
 /** Share of the weakest segment's budget moved to the winner. */
 const SHIFT_PCT = 30;
 const NEW_SEEDS = 4;
+/** Attendees who loved it: an audience this happy isn't paused on ad cost alone. */
+const LOVED = { minResponses: 5, rating: 4.3, returnPct: 60 };
 
 const fmt = (s: ScoredSegment) =>
   s.metricLabel === 'cost per sale' && s.sales === 0
@@ -37,7 +49,7 @@ export async function replan(
   fromVersion: number,
   board: Scoreboard,
   deps: AgentDeps,
-  opts: { force?: boolean } = {},
+  opts: { force?: boolean; survey?: SurveySummary } = {},
 ): Promise<{ brief: CampaignBrief; result: ReplanResult }> {
   if (!board.ready && !opts.force) throw new NotReadyForReplan(board.reason);
   const ranked = board.segments.filter((s) => brief.segments.some((x) => x.id === s.segmentId));
@@ -127,7 +139,13 @@ export async function replan(
       ? worst.metric / best.metric
       : best.metric / Math.max(worst.metric, 1e-9);
     const conclusive = !board.earlySignal && ratio >= DROP_RATIO && brief.segments.length > 2;
-    if (conclusive) {
+    const loved = lovedBy(opts.survey, loser.id);
+    if (conclusive && loved) {
+      changes.push({
+        kind: 'survey',
+        detail: `Kept "${loser.name}" despite ${fmt(worst)}: its attendees rated the show ${loved.avgRating}★ and ${loved.wouldReturnPct}% would come back`,
+      });
+    } else if (conclusive) {
       drop = loser;
       changes.push({
         kind: 'drop_segment',
@@ -197,6 +215,14 @@ export async function replan(
       })),
     ...brief.schedule.filter((s) => s.daysOut < daysOut && s.segmentId !== drop?.id),
   ];
+  const happiest = opts.survey?.bySegment.find(
+    (x) => x.responses >= LOVED.minResponses && x.avgRating !== null,
+  );
+  if (happiest && !changes.some((c) => c.kind === 'survey'))
+    changes.push({
+      kind: 'survey',
+      detail: `Post-show survey: "${happiest.name}" attendees rated it highest, ${happiest.avgRating}★ from ${happiest.responses} responses${happiest.wouldReturnPct !== null ? `, ${happiest.wouldReturnPct}% would come back` : ''}`,
+    });
   changes.push({ kind: 'schedule', detail: `Schedule restarted from ${daysOut} days out` });
 
   const known = deps.knownCallIds ? await deps.knownCallIds() : undefined;

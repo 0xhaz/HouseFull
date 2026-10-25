@@ -2,7 +2,14 @@
 
 import { haversineKm } from '@housefull/geo';
 import { SCENE_LABEL, type TonightEvent, VENUE_TYPE_LABEL } from '@housefull/shared';
-import { ExternalLinkIcon, MegaphoneIcon, NavigationIcon, TrainFrontIcon } from 'lucide-react';
+import {
+  BookmarkPlusIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  MegaphoneIcon,
+  NavigationIcon,
+  TrainFrontIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -150,12 +157,17 @@ export function LineupRow({
   now,
   match,
   here,
+  going,
+  onGoing,
 }: {
   event: TonightEvent;
   tz: string;
   now: number;
   match?: Match;
   here?: { lat: number; lng: number };
+  /** Saved to "Your nights"; after the show it asks for a rating. */
+  going?: boolean;
+  onGoing?: () => void;
 }) {
   const when = whenLabel(e, tz, now);
   const km = distanceKm(e, here);
@@ -242,6 +254,17 @@ export function LineupRow({
           </p>
         ) : null}
         <div className="mt-2.5 flex flex-wrap gap-2">
+          {onGoing && (
+            <Button
+              size="sm"
+              variant={going ? 'secondary' : 'outline'}
+              aria-pressed={going}
+              onClick={onGoing}
+            >
+              {going ? <CheckIcon /> : <BookmarkPlusIcon />}
+              {going ? 'Going' : 'I’m going'}
+            </Button>
+          )}
           {e.url && (
             <Button asChild size="sm">
               <a href={e.url} target="_blank" rel="noopener noreferrer">

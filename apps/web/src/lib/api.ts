@@ -5,6 +5,7 @@ import {
   PresetShowSchema,
   type ReplanResult,
   RunStatusSchema,
+  SurveyInfoSchema,
   type Workspace,
   type WorkspaceOverview,
   WorkspaceOverviewSchema,
@@ -105,3 +106,5 @@ const ScoreboardSchema = z.object({
   ),
 });
 export const getScoreboard = (id: string) => getJson(`/runs/${id}/checkins`, ScoreboardSchema);
+
+export const getSurveyInfo = (runId: string) => getJson(`/runs/${runId}/survey`, SurveyInfoSchema);

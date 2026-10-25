@@ -38,7 +38,7 @@ export const ReplanResultSchema = z.object({
   toVersion: z.number().int().positive(),
   changes: z.array(
     z.object({
-      kind: z.enum(['budget', 'new_segment', 'drop_segment', 'copy', 'schedule']),
+      kind: z.enum(['budget', 'new_segment', 'drop_segment', 'copy', 'schedule', 'survey']),
       detail: z.string(),
       sourceRef: z.string().optional(),
     }),
@@ -89,3 +89,87 @@ export const VenueTasteProfileSchema = z.object({
   avgRating: z.number().min(1).max(5),
 });
 export type VenueTasteProfile = z.infer<typeof VenueTasteProfileSchema>;
+
+// ─── Post-show survey (F9c) ───────────────────────────────────────────────────
+// Anonymous: no names, emails or IPs are stored with a response.
+
+export const SURVEY_HEARD_VIA = [
+  'Instagram or Facebook ad',
+  'TikTok',
+  'A podcast',
+  'A friend',
+  'The venue',
+  'A poster or flyer',
+  'Ticketmaster',
+  'HouseFull Tonight',
+  'I was already a fan',
+  'Somewhere else',
+] as const;
+
+export const SURVEY_TAGS = [
+  'Great sound',
+  'Great crowd',
+  'Great venue',
+  'Easy to get home',
+  'Would bring friends',
+] as const;
+
+/** What a respondent sees. Options are the audiences' seed artists, shuffled and unlabeled. */
+export const SurveyInfoSchema = z.object({
+  surveyId: z.string(),
+  runId: z.string(),
+  show: z.object({ artist: z.string(), venue: z.string(), city: z.string(), date: z.string() }),
+  options: z.array(z.object({ entityId: z.string(), name: z.string() })),
+  heardVia: z.array(z.string()),
+  tags: z.array(z.string()),
+});
+export type SurveyInfo = z.infer<typeof SurveyInfoSchema>;
+
+export const SurveyAnswerSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  wouldReturn: z.boolean().optional(),
+  heardVia: z.enum(SURVEY_HEARD_VIA).optional(),
+  /** Entity ids from the survey's options. */
+  alsoLikes: z.array(z.string()).max(20).default([]),
+  tags: z.array(z.enum(SURVEY_TAGS)).max(SURVEY_TAGS.length).default([]),
+  comment: z.string().trim().max(500).optional(),
+  /** Seeded demo data, labelled as such everywhere. */
+  sample: z.boolean().optional(),
+});
+export type SurveyAnswer = z.infer<typeof SurveyAnswerSchema>;
+
+const Satisfaction = z.object({
+  responses: z.number().int().nonnegative(),
+  avgRating: z.number().nullable(),
+  /** 0–100, of those who answered. */
+  wouldReturnPct: z.number().nullable(),
+});
+
+/** Per-audience results: a respondent counts for every audience whose artists they ticked. */
+export const SurveySummarySchema = z.object({
+  responses: z.number().int().nonnegative(),
+  /** Shown in full once there are this many responses (small numbers can identify people). */
+  enough: z.boolean(),
+  sample: z.boolean(),
+  overall: Satisfaction,
+  bySegment: z.array(Satisfaction.extend({ segmentId: z.string(), name: z.string() })),
+  /** Ticked none of the audiences' artists, or said they were already a fan. */
+  coreFans: Satisfaction,
+  heardVia: z.array(z.object({ channel: z.string(), share: z.number() })),
+  tags: z.array(z.object({ tag: z.string(), count: z.number().int() })),
+  comments: z.array(z.string()),
+});
+export type SurveySummary = z.infer<typeof SurveySummarySchema>;
+
+/** A fan's rating of a show they went to, from Tonight. Shared only if they opt in. */
+export const TonightRatingSchema = z.object({
+  artist: z.string().min(1).max(200),
+  venue: z.string().min(1).max(200),
+  date: z.iso.date(),
+  rating: z.number().int().min(1).max(5),
+  wouldReturn: z.boolean().optional(),
+  tags: z.array(z.enum(SURVEY_TAGS)).default([]),
+  /** Qloo ids of artists the fan likes: lets the organizer see which audience they belong to. */
+  likes: z.array(z.string()).max(10).default([]),
+});
+export type TonightRating = z.infer<typeof TonightRatingSchema>;

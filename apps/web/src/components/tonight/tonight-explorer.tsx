@@ -31,7 +31,9 @@ import { getTonight, getTonightSpots } from '@/lib/client-api';
 import { cn } from '@/lib/utils';
 import { ArtistPicker } from './artist-picker';
 import { isOn, LineupRow, type Match, PosterCard, startOf } from './event-card';
+import { useNights } from './nights';
 import { SpotCard } from './spot-card';
+import { YourNights } from './your-nights';
 
 const WHEN: Array<[TonightWhen, string]> = [
   ['tonight', 'Tonight'],
@@ -96,14 +98,24 @@ export function TonightExplorer() {
     return () => clearInterval(t);
   }, []);
 
-  const likesKey = likes.map((l) => l.id).join(',');
+  const { nights, toggleGoing, rate, forget } = useNights();
+  const goingIds = useMemo(() => new Set(nights.map((n) => n.eventId)), [nights]);
+  // Shows rated 4+ are taste signals too: explicit likes first, five in all (the API's cap).
+  const loved = useMemo(() => {
+    const seen = new Set(likes.map((l) => l.id));
+    return nights.flatMap((n) =>
+      n.loved && !seen.has(n.loved.id) && seen.add(n.loved.id) ? [n.loved] : [],
+    );
+  }, [nights, likes]);
+  const signals = useMemo(() => [...likes, ...loved].slice(0, 5), [likes, loved]);
+  const likesKey = signals.map((l) => l.id).join(',');
   // biome-ignore lint/correctness/useExhaustiveDependencies: likesKey stands in for likes
   useEffect(() => {
     let live = true;
     const load = () => {
       setLoading(true);
       setError(null);
-      getTonight(city, when, likes)
+      getTonight(city, when, signals)
         .then((r) => live && setData(r))
         .catch((e: Error) => live && setError(e.message))
         .finally(() => live && setLoading(false));
@@ -120,7 +132,7 @@ export function TonightExplorer() {
   useEffect(() => {
     let live = true;
     setSpots(null);
-    getTonightSpots(city, likes).then(
+    getTonightSpots(city, signals).then(
       (r) => live && setSpots(r),
       () => live && setSpots({ city, date: '', available: false, spots: [] }),
     );
@@ -294,7 +306,15 @@ export function TonightExplorer() {
           </div>
 
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <ArtistPicker likes={likes} onChange={changeLikes} tone="dark" />
+            <div className="grid gap-1.5">
+              <ArtistPicker likes={likes} onChange={changeLikes} tone="dark" />
+              {loved.length > 0 && (
+                <p className="text-xs text-white/60">
+                  Also using {loved.length} show{loved.length === 1 ? '' : 's'} you loved:{' '}
+                  {loved.map((l) => l.name).join(', ')}
+                </p>
+              )}
+            </div>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -357,6 +377,7 @@ export function TonightExplorer() {
 
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="grid min-w-0 content-start gap-10">
+          <YourNights nights={nights} likes={signals} onRate={rate} onForget={forget} />
           {error && <p className="text-sm text-destructive">{error}</p>}
           {data && !data.available && (
             <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
@@ -411,7 +432,7 @@ export function TonightExplorer() {
             icon={<SparklesIcon className="size-5 text-primary" aria-hidden />}
             subtitle={
               data?.tasteUsed
-                ? `Closest to ${likes.map((l) => l.name).join(', ')}, by Qloo’s taste graph`
+                ? `Closest to ${signals.map((l) => l.name).join(', ')}, by Qloo’s taste graph`
                 : 'Jazz clubs, bars and small venues first. Add artists you love above for picks matched to your taste'
             }
           >
@@ -479,6 +500,8 @@ export function TonightExplorer() {
                           now={now}
                           match={matches.get(e.id)}
                           here={here}
+                          going={goingIds.has(e.id)}
+                          onGoing={() => toggleGoing(e)}
                         />
                       ))}
                     </ul>

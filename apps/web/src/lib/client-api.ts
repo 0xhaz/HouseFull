@@ -8,6 +8,10 @@ import type {
   OutreachDraft,
   OutreachUpdate,
   ShowInput,
+  SurveyAnswer,
+  SurveyInfo,
+  SurveySummary,
+  TonightRating,
   TonightResult,
   TonightSpots,
   TonightWhen,
@@ -152,3 +156,14 @@ export const getTonightSpots = (city: string, likes: LikedArtist[]) =>
       ...(likes.length ? { likes: JSON.stringify(likes) } : {}),
     })}`,
   );
+
+export const getSurveyResults = (runId: string) =>
+  send<{ summary: SurveySummary | null }>(`/runs/${runId}/survey/results`);
+export const getSurveyInfo = (runId: string) => send<SurveyInfo>(`/runs/${runId}/survey`);
+export const postSurveyAnswer = (surveyId: string, body: SurveyAnswer) =>
+  send<{ ok: true }>(`/surveys/${surveyId}/responses`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+export const postTonightRating = (body: TonightRating) =>
+  send<{ shared: boolean }>('/tonight/ratings', { method: 'POST', body: JSON.stringify(body) });

@@ -407,7 +407,10 @@ export const checkins = pgTable('checkins', {
 
 export const surveys = pgTable('surveys', {
   id: id(),
-  runId: uuid('run_id').references(() => runs.id, { onDelete: 'set null' }),
+  /** One survey per run (the show); options are its audiences' seed artists. */
+  runId: uuid('run_id')
+    .references(() => runs.id, { onDelete: 'cascade' })
+    .unique(),
   venueId: uuid('venue_id').references(() => venues.id),
   /** Qloo refs offered as "which of these do you also like?". */
   options: jsonb('options').notNull(),
@@ -425,7 +428,10 @@ export const surveyResponses = pgTable(
     heardVia: text('heard_via'),
     alsoLikes: text('also_likes').array().notNull().default(sql`'{}'::text[]`),
     wouldReturn: boolean('would_return'),
+    tags: text('tags').array().notNull().default(sql`'{}'::text[]`),
     comment: text('comment'),
+    /** Seeded demo data, labelled wherever it's shown. */
+    sample: boolean('sample').notNull().default(false),
     createdAt: createdAt(),
   },
   (t) => [index('survey_responses_survey_idx').on(t.surveyId)],

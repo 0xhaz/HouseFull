@@ -89,4 +89,51 @@ describe('replan', () => {
     expect(result.summary).toContain('$10.00 per sale');
     expect(next.schedule[0]?.action).toMatch(/Added|Moved/);
   });
+
+  it('keeps an expensive audience that attendees loved, and says why', async () => {
+    const { deps, brief } = await setup();
+    const [a, b] = brief.segments;
+    const three = {
+      ...brief,
+      segments: [...brief.segments, { ...(b as typeof a & object), id: 's9', name: 'Spare' }],
+    };
+    const board = scoreSegments(
+      three.segments.map((s) => s.id),
+      [
+        {
+          source: 'manual',
+          at: new Date(),
+          bySegment: [
+            { segmentId: a?.id as string, sales: 6, spendUsd: 60 },
+            { segmentId: b?.id as string, sales: 2, spendUsd: 60 },
+            { segmentId: 's9', sales: 1, spendUsd: 90 },
+          ],
+        },
+      ],
+    );
+    const sat = (segmentId: string, name: string, avgRating: number, wouldReturnPct: number) => ({
+      segmentId,
+      name,
+      responses: 8,
+      avgRating,
+      wouldReturnPct,
+    });
+    const survey = {
+      responses: 20,
+      enough: true,
+      sample: true,
+      overall: { responses: 20, avgRating: 4.4, wouldReturnPct: 70 },
+      bySegment: [sat('s9', 'Spare', 4.8, 90), sat(a?.id as string, a?.name as string, 4.1, 60)],
+      coreFans: { responses: 4, avgRating: 4, wouldReturnPct: 50 },
+      heardVia: [],
+      tags: [],
+      comments: [],
+    };
+    const { brief: next, result } = await replan(three, 1, board, deps, { survey });
+    const kinds = result.changes.map((c) => c.kind);
+    expect(kinds).not.toContain('drop_segment');
+    expect(next.segments.some((s) => s.id === 's9')).toBe(true);
+    const kept = result.changes.find((c) => c.kind === 'survey');
+    expect(kept?.detail).toMatch(/Kept "Spare".*4\.8★.*90% would come back/);
+  });
 });

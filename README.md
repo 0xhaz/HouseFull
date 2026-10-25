@@ -55,6 +55,7 @@ Ticketmaster) and in about a minute you get a **campaign brief**:
 | **Countdown** | What to do each day until doors open, audience by audience |
 | **Show night** (New York) | Same-night competing shows, subway disruptions, street events, and a "getting home" plan (best late-night station, suggested walking route) |
 | **Results and re-plan** | Tracking links, check-ins by hand or from a Meta Ads export, a scoreboard per audience, and a new brief version that explains what changed |
+| **After the show** | A two-minute anonymous survey (QR code for the venue screens). The artists attendees tick place them in an audience, so you see which audiences loved the night and would come back. The next re-plan uses it |
 | **Exports** | Meta and TikTok ad CSVs, a print-ready PDF, GPX for the street team |
 
 On top of the brief:
@@ -64,7 +65,7 @@ On top of the brief:
 | **Promoters** | Every show with tickets sold and days to go, what needs attention, today's step per show, where new buyers are per city |
 | **Venues** | Planned shows, the on-sale Ticketmaster calendar (one click to a brief), who the room draws, local partners |
 | **Artist teams** | The tour city by city, *taste threads* (what carries across cities), new fans per market |
-| **Fans** | *Tonight*: gigs, jazz clubs and pubs with live music, ranked by the artists you love |
+| **Fans** | *Tonight*: gigs, jazz clubs and pubs with live music, ranked by the artists you love. *Your nights*: save shows, rate them afterwards; loved shows sharpen your picks |
 
 Every workspace also has:
 - **Ask your workspace**: questions answered only from your briefs and results, with links to the sources.
@@ -89,6 +90,7 @@ words.
 | Outreach contacts | `/entities` | Address, phone, website, hours, Google place id |
 | Tonight: taste ranking | `/v2/insights` with `filter.results.entities` | Affinity of tonight's acts to the artists a fan likes |
 | Tonight: walk-in spots | `/v2/insights` · `urn:entity:place` + tags | Jazz/blues clubs, pubs and bars with live music |
+| Post-show attribution | The audiences' seed artists | The survey asks "which of these do you also like?": answers map attendees to audiences by taste, with no tracking |
 
 Two details that matter:
 
@@ -131,6 +133,8 @@ flowchart LR
   BR --> X[Export ads, PDF, GPX]
   BR --> O[Outreach emails]
   X --> RES[Check in results]
+  BR --> SV[Post-show survey]
+  SV --> RP
   RES --> RP[Re-plan → new version]
   RP --> BR
 ```
@@ -146,6 +150,8 @@ flowchart LR
 | Ask a question | Workspace → *Ask your workspace* | Type a question; answers cite the briefs they used |
 | Invite your team | Workspace → *Team* | Invite by email; roles come from your organization |
 | Find a show tonight | *Tonight* | Pick when, add artists you like, filter by scene or *Intimate rooms only*, *Near me* for distances |
+| Survey attendees | Brief → *Results* | Show the QR code at the end of the set or link it in the post-show email; results appear per audience from 10 responses |
+| Rate a show you went to | *Tonight* | *I'm going* on a show → afterwards *Your nights* asks *How was it?* → rate; optionally share anonymously with the organizer |
 
 ## Architecture
 
@@ -257,6 +263,8 @@ flowchart TD
   CR -->|pass| B[Brief v1]
   CR -->|fix once| WR
   B --> RES[Results check-in]
+  B --> SV[Post-show survey<br/>taste-attributed]
+  SV --> RP
   RES --> RP[Re-plan<br/>shift budget · lookalikes · pause]
   RP --> B2[Brief v2, with what changed]
 ```
@@ -374,8 +382,9 @@ connects as the owner.
   age, gender, ethnicity, religion or sexuality; the critic and the email/Ask guards enforce it.
 - **Safety data is context only.** NYPD incident counts appear only as promoter-side show-night
   context, as plain counts vs. similar nightlife areas. They never rank or exclude audiences.
-- **Private by default.** A fan's location never leaves the browser. Liked artists are stored on the
-  device. Outreach drafts never mention ticket sales or budgets, and HouseFull never sends email itself.
+- **Private by default.** A fan's location never leaves the browser. Liked artists and rated shows are
+  stored on the device. Survey answers are anonymous (no name, email or IP stored), audience results
+  appear only from 10 responses, and a fan's rating is shared with an organizer only if they opt in. Outreach drafts never mention ticket sales or budgets, and HouseFull never sends email itself.
 - **Qloo terms.** No Qloo response data is committed; caches live in the private database.
 
 ## Data sources and attribution

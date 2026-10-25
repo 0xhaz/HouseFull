@@ -131,7 +131,7 @@ export function venueTypeOf(name: string): VenueType {
 /** Theatre, musicals and classical are out of scope for now: live music in bars, clubs and venues. */
 export function isTheatre(e: { name: string; genres: string[] }): boolean {
   return (
-    /\b(the )?musical\b|broadway|opera\b|ballet|symphony|philharmonic|orchestra|nutcracker|cirque/i.test(
+    /\b(the )?musical\b|broadway|opera\b|ballet|symphony|philharmonic|orchestra|nutcracker|cirque|mamma mia|bottomless brunch|comedy|stand-?up|drag (show|brunch)|magic show/i.test(
       e.name,
     ) || e.genres.some((g) => /theat(er|re)|classical|opera|musical|broadway/i.test(g))
   );

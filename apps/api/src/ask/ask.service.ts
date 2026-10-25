@@ -9,6 +9,7 @@ import {
 import type { Workspace } from '@housefull/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { CheckinsService } from '../runs/checkins.service.js';
+import { SurveysService } from '../runs/surveys.service.js';
 import { WorkspacesService } from '../workspaces/workspaces.service.js';
 
 const MAX_SHOWS = 12;
@@ -22,6 +23,7 @@ export class AskService {
   constructor(
     private readonly workspaces: WorkspacesService,
     private readonly checkins: CheckinsService,
+    private readonly surveys: SurveysService,
   ) {}
 
   async ask(ws: Workspace, question: string): Promise<AskResult> {
@@ -47,9 +49,10 @@ export class AskService {
     const shows = await Promise.all(
       done.map(async (r, i): Promise<AskShow> => {
         const daysOut = Math.round((Date.parse(`${r.show.date}T00:00:00Z`) - today) / DAY);
-        const [latest, board] = await Promise.all([
+        const [latest, board, survey] = await Promise.all([
           this.checkins.latest(r.id).catch(() => undefined),
           r.checkins > 0 ? this.checkins.scoreboard(r.id).catch(() => undefined) : undefined,
+          this.surveys.summary(r.id).catch(() => undefined),
         ]);
         const brief = latest?.brief;
         const due = [...r.schedule]
@@ -84,6 +87,16 @@ export class AskService {
                   spendUsd: s.spendUsd,
                 })),
                 missing: board.missing,
+              }
+            : undefined,
+          survey: survey?.responses
+            ? {
+                responses: survey.responses,
+                sample: survey.sample,
+                avgRating: survey.overall.avgRating,
+                wouldReturnPct: survey.overall.wouldReturnPct,
+                bySegment: survey.bySegment.filter((x) => x.responses > 0),
+                heardVia: survey.heardVia.slice(0, 4),
               }
             : undefined,
         };

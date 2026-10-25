@@ -34,6 +34,7 @@ import { DisruptionsCard } from './disruptions-card';
 import { GettingHomeCard } from './getting-home-card';
 import { ScheduleList } from './schedule-list';
 import { SegmentPanel } from './segment-panel';
+import { SurveyPanel } from './survey-panel';
 
 type Props = {
   runId: string;
@@ -242,7 +243,10 @@ export function BriefScreen({ runId, brief, version, versions, note }: Props) {
             </div>
           </TabsContent>
           <TabsContent value="results" className="mt-4">
-            <CheckinPanel runId={runId} brief={brief} isLatest={version === latest} />
+            <div className="grid gap-6">
+              <CheckinPanel runId={runId} brief={brief} isLatest={version === latest} />
+              <SurveyPanel runId={runId} showDate={brief.show.date} />
+            </div>
           </TabsContent>
         </Tabs>
 

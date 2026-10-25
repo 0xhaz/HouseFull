@@ -31,6 +31,21 @@ export type AskShow = {
     bySegment: Array<{ segmentId: string; clicks: number; sales: number; spendUsd: number }>;
     missing: string[];
   };
+  /** Post-show survey: satisfaction per audience (taste-attributed). */
+  survey?: {
+    responses: number;
+    sample: boolean;
+    avgRating: number | null;
+    wouldReturnPct: number | null;
+    bySegment: Array<{
+      segmentId: string;
+      name: string;
+      responses: number;
+      avgRating: number | null;
+      wouldReturnPct: number | null;
+    }>;
+    heardVia: Array<{ channel: string; share: number }>;
+  };
 };
 
 export type AskFacts = {
@@ -63,7 +78,8 @@ const SYSTEM = (persona: Persona) =>
     'Never invent numbers. Only use numbers that appear in the facts.',
     'Never describe or target people by age, gender, ethnicity, religion or sexuality; audiences are defined by taste.',
     'Refer to audiences by their name, never by id (say "Dream Pop & Ethereal Indie", not "s2"), and to shows by artist and venue, never by ref.',
-    'Results marked sample:true are sample data: say so if you rely on them.',
+    'Results or surveys marked sample:true are sample data: say so if you rely on them.',
+    'A show’s survey is what attendees said after the show (rating out of 5, % who would come back), per audience.',
     'In `cites`, list what you used: a show ref like "S1", a segment like "S1/s2", or a reason sourceRef. Up to 5.',
     'In `followUps`, suggest up to 3 short next questions this user might ask.',
   ].join('\n');

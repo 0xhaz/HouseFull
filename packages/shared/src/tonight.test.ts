@@ -67,6 +67,7 @@ describe('scenes, rooms and theatre', () => {
   it('drops theatre and musicals, keeps concerts in theatres', () => {
     expect(isTheatre({ name: 'Lost Boys Musical', genres: [] })).toBe(true);
     expect(isTheatre({ name: 'Hamilton', genres: ['Theatre'] })).toBe(true);
+    expect(isTheatre({ name: 'MAMMA MIA! Bottomless Brunch', genres: [] })).toBe(true);
     expect(isTheatre({ name: 'Sylvan Esso', genres: ['Electronic'] })).toBe(false);
   });
 });

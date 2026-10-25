@@ -67,6 +67,19 @@ const SECTIONS: Array<{
     ],
   },
   {
+    id: 'survey',
+    title: 'Hear from the crowd',
+    who: 'Promoters, venues, artist teams',
+    intro:
+      'A two-minute anonymous survey after the show tells you which audiences loved the night.',
+    steps: [
+      'On the brief’s Results tab, copy the survey link or show the QR code on the venue screens at the end of the set.',
+      'Attendees rate the night, say whether they’d come back, and tick artists they also like. Those artists place them in an audience, so nobody is tracked.',
+      'From 10 responses you see ratings and return intent per audience, how people heard about the show, and what stood out.',
+      'The next re-plan uses it: an audience that loved the night isn’t paused just because its ads cost more.',
+    ],
+  },
+  {
     id: 'ask',
     title: 'Ask your workspace',
     who: 'Promoters, venues, artist teams',
@@ -110,6 +123,7 @@ const SECTIONS: Array<{
       'Add up to five artists you love: the rail becomes “Top picks for you”, ranked by Qloo, including acts you’ve never heard of.',
       '“Walk in tonight” lists jazz clubs, pubs and bars known for live music, with open hours and directions.',
       'Filter by scene or “Intimate rooms only”. “Near me” adds distances; your location stays in your browser.',
+      'Tap “I’m going” on a show. Afterwards, “Your nights” asks how it was: rate it, and shows you loved sharpen your picks. Sharing with the organizer is optional and anonymous.',
     ],
     cta: ['/tonight', 'Open Tonight'],
   },
