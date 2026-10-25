@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { shadcn } from '@clerk/ui/themes';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           <ThemeProvider>
             <SiteHeader />
             {children}
+            <SiteFooter />
             <Toaster closeButton />
           </ThemeProvider>
         </ClerkProvider>

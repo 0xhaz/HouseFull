@@ -22,13 +22,20 @@ export function SiteHeader() {
           </span>
           <span className="hidden sm:inline">HouseFull</span>
         </Link>
-        <nav aria-label="Main" className="sm:ml-2">
-          <Link
-            href="/tonight"
-            className="rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            Tonight
-          </Link>
+        <nav aria-label="Main" className="flex items-center sm:ml-2">
+          {[
+            ['/tonight', 'Tonight', ''],
+            ['/guide', 'Guide', 'hidden md:inline-flex'],
+            ['/about', 'About', 'hidden md:inline-flex'],
+          ].map(([href, label, cls]) => (
+            <Link
+              key={href}
+              href={href as string}
+              className={`rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground ${cls}`}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Suspense fallback={<Skeleton className="h-8 w-36" />}>
