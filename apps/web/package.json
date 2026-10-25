@@ -2,6 +2,9 @@
   "name": "@housefull/web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "node scripts/copy-maplibre-worker.mjs && next dev --port 3100",
     "build": "node scripts/copy-maplibre-worker.mjs && next build",

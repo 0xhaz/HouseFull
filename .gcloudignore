@@ -1,0 +1,4 @@
+# Source uploaded to Cloud Build: same rules as git, plus the git dir itself.
+#!include:.gitignore
+.git
+.github
