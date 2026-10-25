@@ -10,7 +10,7 @@ test('tonight: gig guide, jazz clubs, taste picks, location stays local', async 
   page.on('request', (r) => sent.push(r.url()));
 
   await page.goto('/');
-  await page.getByRole('link', { name: /See what.s on tonight/ }).click();
+  await page.getByRole('link', { name: 'Going out tonight?' }).click();
   await expect(page).toHaveURL(/\/tonight/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Tonight in');
 

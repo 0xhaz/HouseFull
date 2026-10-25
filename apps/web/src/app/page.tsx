@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { FlowDiagram } from '@/components/landing/flow-diagram';
 import { HeroBrief, HeroBriefPlaceholder } from '@/components/landing/hero-brief';
+import { PersonaTabs } from '@/components/landing/persona-tabs';
 import {
+  BeforeAfter,
   BriefContents,
   FinalCta,
-  ForFans,
-  HowItWorks,
-  Personas,
-  Problem,
   SectionHeading,
   Trust,
 } from '@/components/landing/sections';
@@ -17,6 +16,17 @@ import { ShowForm } from '@/components/show-form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DemoWorkspaces } from '@/components/workspace/demo-workspaces';
 import { ApiError, getPresets } from '@/lib/api';
+import { loadShowcase } from '@/lib/showcase';
+
+async function Flow() {
+  const { showcase } = await loadShowcase();
+  return <FlowDiagram showcase={showcase} />;
+}
+
+async function Personas() {
+  const { personas } = await loadShowcase();
+  return <PersonaTabs previews={personas} />;
+}
 
 async function Presets() {
   try {
@@ -44,7 +54,7 @@ export default function Home() {
             Fill the room with <Accent>fans you don&apos;t have yet.</Accent>
           </>
         }
-        description="Pick a booked show. HouseFull finds the next ring of likely buyers, shows where in the city they are and how to reach them, and writes a campaign brief you can run today. Then it learns from your results and re-plans."
+        description="Pick a booked show. HouseFull finds the next ring of buyers, shows where they are, and writes a campaign you can run today."
         aside={
           <Suspense fallback={<HeroBriefPlaceholder />}>
             <HeroBrief />
@@ -71,10 +81,36 @@ export default function Home() {
       </PageHero>
 
       <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] gap-20 px-4 py-14 sm:py-20">
-        <Problem />
-        <HowItWorks />
-        <Personas />
-        <ForFans />
+        <BeforeAfter />
+
+        <section id="how" aria-labelledby="how-heading" className="grid gap-8 scroll-mt-20">
+          <SectionHeading
+            id="how-heading"
+            eyebrow="How it works"
+            title={
+              <>
+                From a booked show to a <Accent>full room</Accent>
+              </>
+            }
+          >
+            Click any step. Everything shown is from a live demo brief.
+          </SectionHeading>
+          <Suspense fallback={<Skeleton className="h-[30rem] rounded-3xl" />}>
+            <Flow />
+          </Suspense>
+        </section>
+
+        <section aria-labelledby="who-heading" className="grid gap-8">
+          <SectionHeading
+            id="who-heading"
+            eyebrow="Built for the whole bill"
+            title="A screen for every team"
+          />
+          <Suspense fallback={<Skeleton className="h-96 rounded-3xl" />}>
+            <Personas />
+          </Suspense>
+        </section>
+
         <BriefContents />
         <Trust />
 

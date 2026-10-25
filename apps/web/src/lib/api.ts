@@ -89,3 +89,19 @@ export function asReplan(note: unknown): ReplanResult | undefined {
 }
 
 export type { CampaignBrief };
+
+const ScoreboardSchema = z.object({
+  ready: z.boolean(),
+  sample: z.boolean(),
+  segments: z.array(
+    z.object({
+      segmentId: z.string(),
+      clicks: z.number(),
+      sales: z.number(),
+      spendUsd: z.number(),
+      metric: z.number(),
+      metricLabel: z.string(),
+    }),
+  ),
+});
+export const getScoreboard = (id: string) => getJson(`/runs/${id}/checkins`, ScoreboardSchema);
