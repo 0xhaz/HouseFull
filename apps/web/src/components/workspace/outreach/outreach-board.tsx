@@ -134,8 +134,8 @@ export function OutreachBoard() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm text-muted-foreground">
-            {progress} of {contacts.length} contacted. Everyone here comes from your briefs, with
-            the reason they fit.
+            {progress} of {contacts.length} contacted. Each contact comes from one of your briefs
+            and says why it fits.
           </p>
           {ws.isDemo && (
             <p className="mt-1 text-xs text-muted-foreground">

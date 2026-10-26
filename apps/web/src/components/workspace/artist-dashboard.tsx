@@ -68,7 +68,7 @@ export function ArtistDashboard({ data }: { data: WorkspaceOverview }) {
         </Section>
         <Section
           title="Taste threads"
-          description="Artists the new audiences love in more than one city: one creative, many markets."
+          description="Artists the new audiences love in more than one city, so one ad can work in several markets."
         >
           <Tally
             items={threads.slice(0, 14)}

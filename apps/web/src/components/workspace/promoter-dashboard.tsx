@@ -65,7 +65,7 @@ export function PromoterDashboard({ data }: { data: WorkspaceOverview }) {
                     .filter((r) => r.show.city === c)
                     .flatMap((r) => r.segments.flatMap((s) => s.neighborhoods)),
                 ).slice(0, 10)}
-                empty="Travel-led city: see each brief for source cities."
+                empty="Most buyers here travel in. Each brief lists the cities they come from."
               />
             </Section>
           ))}
