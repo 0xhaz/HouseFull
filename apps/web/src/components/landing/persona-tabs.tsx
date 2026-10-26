@@ -48,7 +48,7 @@ const TABS: Array<{
     points: [
       'Your on-sale calendar, one click to a plan',
       'Who your room draws',
-      'Email nearby bars in a click',
+      'Drafted emails to nearby bars',
     ],
     href: '/w/demo-venue',
     cta: 'Open the venue demo',

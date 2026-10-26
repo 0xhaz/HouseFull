@@ -48,7 +48,7 @@ export function BeforeAfter() {
         eyebrow="The problem"
         title={
           <>
-            A half-sold show needs <Accent>new fans</Accent>, not louder ads
+            A half-sold show needs <Accent>new fans</Accent>
           </>
         }
       />
@@ -62,7 +62,7 @@ export function BeforeAfter() {
         <Panel
           label="With HouseFull"
           title="Reach the next ring out"
-          note="People whose taste sits right next to the artist’s, near the venue."
+          note="People whose taste is close to the artist’s and who live near the venue."
           bright
         />
       </div>
@@ -220,7 +220,8 @@ export function FinalCta() {
           Set up a workspace for <Accent>your team</Accent>
         </h2>
         <p className="mt-2 text-white/70 text-pretty">
-          Promoter, venue or artist team. Invite colleagues, plan your first show in a minute.
+          For promoters, venues and artist teams. Invite your colleagues and plan your first show in
+          about a minute.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">

@@ -23,7 +23,7 @@ const STEPS = [
   {
     icon: SparklesIcon,
     title: 'Find the next ring',
-    line: 'Qloo’s taste graph: who else would love this act.',
+    line: 'Qloo’s taste graph finds who else would like this act.',
   },
   {
     icon: MapPinnedIcon,
@@ -33,7 +33,7 @@ const STEPS = [
   {
     icon: BadgeCheckIcon,
     title: 'Get the brief',
-    line: 'Ad copy, channels and partners, every claim sourced.',
+    line: 'Ad copy, channels and partners, with a source for every claim.',
   },
   {
     icon: BarChart3Icon,
@@ -43,7 +43,7 @@ const STEPS = [
   {
     icon: RefreshCwIcon,
     title: 'Re-plan',
-    line: 'Budget moves to what sells. A new version, with reasons.',
+    line: 'Budget moves to what sells, and a new version explains why.',
   },
 ] as const;
 
@@ -249,7 +249,7 @@ function Stage({ step, s }: { step: number; s: Showcase }) {
               )}
             </div>
             <div className="border-t border-dashed border-zinc-300 px-5 py-3 text-xs text-zinc-500">
-              Not selling fast enough? HouseFull finds who else would buy.
+              If it’s selling slowly, HouseFull finds who else would buy.
             </div>
           </div>
         </div>
@@ -290,8 +290,8 @@ function Stage({ step, s }: { step: number; s: Showcase }) {
             </div>
           ))}
           <p className="text-xs text-white/50">
-            Ranked by how much more this taste shows up there than across the city, not by
-            population.
+            Ranked by how much stronger this taste is there than across the city, so busy areas
+            don’t win on size alone.
           </p>
         </div>
       );

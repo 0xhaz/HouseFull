@@ -59,7 +59,7 @@ const SECTIONS: Array<{
     id: 'results',
     title: 'Check in results and re-plan',
     who: 'Promoters, venues, artist teams',
-    intro: 'The brief gets better as the campaign runs.',
+    intro: 'Each round of results feeds a new version of the brief.',
     steps: [
       'On the brief’s Results tab, enter clicks, sales and spend per audience, or upload a Meta Ads Manager export.',
       'Once there’s enough signal (50 clicks per audience or 5 sales), click “Re-plan from results”.',
@@ -86,14 +86,15 @@ const SECTIONS: Array<{
     intro: 'Plain-language questions, answered only from your own briefs and results.',
     steps: [
       'On the workspace overview, type a question or pick a suggestion, e.g. “Which show needs the most help this week?”.',
-      'Each answer links to the briefs it used; follow-up suggestions keep the thread going.',
+      'Each answer links to the briefs it used and suggests follow-up questions.',
     ],
   },
   {
     id: 'outreach',
     title: 'Contact partners, acts and podcasts',
     who: 'Promoters, venues, artist teams',
-    intro: 'Everyone worth contacting, straight from your briefs, with the reason they fit.',
+    intro:
+      'The places, acts and podcasts in your briefs that are worth contacting, each with the reason it fits.',
     steps: [
       'Open “Outreach” in your workspace. Filter by places, acts or podcasts.',
       'Each card has the address, phone, website and opening hours where available.',

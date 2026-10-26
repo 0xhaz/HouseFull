@@ -67,7 +67,7 @@ export default function Page() {
             A campaign agent for <Accent>live music</Accent>
           </>
         }
-        description="Shows don’t sell out by shouting louder at the same fans. HouseFull uses Qloo’s taste graph to find the people next to them, then turns that into a plan a promoter, venue or artist team can run today."
+        description="Most promotion goes to fans who already know about the show. HouseFull uses Qloo’s taste graph to find people with similar taste who haven’t heard about it yet, and turns that into a plan a promoter, venue or artist team can start the same day."
       >
         <div className="flex flex-wrap gap-2">
           <Link href="/guide" className={heroPill(true)}>
@@ -86,9 +86,9 @@ export default function Page() {
             eyebrow="What it does"
             title="From a booked show to a full room"
           >
-            Plan any show in New York, New Orleans or Los Angeles. In about a minute: new audiences,
-            where they live, how to reach them, ad copy, partners, openers, a countdown and a
-            show-night plan. Check in results and it re-plans.
+            Plan any show in New York, New Orleans or Los Angeles. In about a minute you get new
+            audiences, where they live and how to reach them, plus ad copy, partners, openers, a
+            countdown and a show-night plan. When you check in results, it re-plans.
           </SectionHeading>
           <Suspense fallback={<Skeleton className="h-[30rem] rounded-3xl" />}>
             <Flow />
@@ -101,12 +101,12 @@ export default function Page() {
             eyebrow="Qloo-powered"
             title={
               <>
-                Taste decides. <Accent>Models only write.</Accent>
+                Qloo picks the audiences, <Accent>Gemini writes the copy</Accent>
               </>
             }
           >
             Every decision comes from Qloo’s taste graph. Gemini names audiences, writes copy and
-            checks it, but never invents who to target.
+            checks it, but it doesn’t choose who to target.
           </SectionHeading>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {QLOO.map((q) => (
@@ -118,9 +118,10 @@ export default function Page() {
             ))}
           </ul>
           <div className="grid gap-4 md:grid-cols-2">
-            <Fact title="Lift, not popularity">
-              Raw heatmap affinity tracks plain popularity (r ≈ 0.99): it mostly shows where people
-              live. Divided by a city baseline it drops to r ≈ 0.07, real taste signal.
+            <Fact title="Taking popularity out">
+              Raw heatmap affinity correlates with plain popularity (r ≈ 0.99), so it mostly shows
+              where people live. Divided by a city baseline, the correlation drops to r ≈ 0.07 and
+              what’s left is taste.
             </Fact>
             <Fact title="Every claim is sourced">
               Each Qloo call is logged with an id, and every reason in a brief carries the id of the
@@ -135,17 +136,13 @@ export default function Page() {
         </section>
 
         <section aria-labelledby="values" className="grid gap-8">
-          <SectionHeading
-            id="values"
-            eyebrow="Responsible by design"
-            title="What it will never do"
-          />
+          <SectionHeading id="values" eyebrow="Responsible by design" title="What it won’t do" />
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: UsersIcon,
                 t: 'Target traits',
-                d: 'Audiences are taste, never age, gender, ethnicity, religion or sexuality.',
+                d: 'Audiences are defined by taste, never by age, gender, ethnicity, religion or sexuality.',
               },
               {
                 icon: ShieldCheckIcon,

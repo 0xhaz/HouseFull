@@ -54,7 +54,7 @@ export default function Home() {
             Fill the room with <Accent>fans you don&apos;t have yet.</Accent>
           </>
         }
-        description="Pick a booked show. HouseFull finds the next ring of buyers, shows where they are, and writes a campaign you can run today."
+        description="Pick a booked show. HouseFull uses Qloo’s taste data to find who else would buy a ticket and where they live, then writes the campaign to reach them."
         aside={
           <Suspense fallback={<HeroBriefPlaceholder />}>
             <HeroBrief />
