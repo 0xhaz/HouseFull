@@ -2,10 +2,10 @@
 
 **Fill the room with fans you don't have yet.**
 
-HouseFull is a Qloo-powered campaign agent for live music. Give it a booked show that isn't selling
-fast enough. It finds the *next ring* of likely buyers (people whose taste sits right next to the
-artist's, who live within reach of the venue), works out where they are and how to reach them, and
-writes a campaign brief you can run today. When results come in, it re-plans.
+HouseFull is a campaign agent for live music built on Qloo. Give it a booked show that isn't selling
+fast enough and it finds the *next ring* of likely buyers: people whose taste is close to the
+artist's and who live within reach of the venue. It works out where they are and how to reach them,
+then writes a campaign brief you can start on the same day. When results come in, it re-plans.
 
 It serves promoters, venues and artist teams, each with their own workspace and dashboard. For
 fans, *Tonight* shows what's on in the city, ranked by the artists they love.
@@ -73,8 +73,8 @@ Every workspace also has:
 
 ## What makes it Qloo-powered
 
-Qloo's taste graph drives every decision the agent makes. Language models only write and check the
-words.
+Qloo's taste graph makes the agent's decisions: who to target, where they live, which channels and
+partners to use. Gemini names the audiences, writes the copy and reviews it.
 
 | Feature | Qloo API | How it's used |
 |---|---|---|
@@ -92,15 +92,15 @@ words.
 | Tonight: walk-in spots | `/v2/insights` · `urn:entity:place` + tags | Jazz/blues clubs, pubs and bars with live music |
 | Post-show attribution | The audiences' seed artists | The survey asks "which of these do you also like?": answers map attendees to audiences by taste, with no tracking |
 
-Two details that matter:
+Raw heatmaps had to be corrected for popularity. Our probe of the hackathon API found raw heatmap
+affinity correlates with plain popularity at r ≈ 0.99, so it mostly shows where people live. Dividing
+by a city-wide baseline drops that to r ≈ 0.07, and what's left is taste. Tonight applies the same
+idea to acts, so a small club act close to your taste can outrank a stadium act that's only loosely
+compatible.
 
-- **Lift, not popularity.** Our probe of the hackathon API found raw heatmap affinity correlates with
-  plain popularity at r ≈ 0.99, so it mostly shows where people live. Dividing by a city-wide baseline
-  drops that to r ≈ 0.07: real taste signal. Tonight applies the same idea to acts, so a small club act
-  close to your taste can outrank a stadium act that's merely compatible.
-- **Every claim is sourced.** Each Qloo call is logged with an id; every reason in a brief carries the
-  id of the call it came from, and a critic drops claims whose source it can't verify. No Qloo response
-  data is stored in this repository (test fixtures are synthetic).
+Each Qloo call is logged with an id, and every reason in a brief carries the id of the call it came
+from. A critic drops claims whose source it can't verify. No Qloo response data is stored in this
+repository (test fixtures are synthetic).
 
 ## Try it in five minutes
 
@@ -113,7 +113,7 @@ No account needed. Open **https://housefull-two.vercel.app** and:
 4. **Venue demo → Outreach → Write email** on a nearby bar.
 5. **Tonight** (header): add an artist you love and see *Top picks for you* and jazz clubs open now.
 
-Want a fresh plan? On the landing page, *Plan your own show* → find a show on Ticketmaster → *Plan this
+For a fresh plan, go to *Plan your own show* on the landing page → find a show on Ticketmaster → *Plan this
 show* (about a minute). To check in results, upload [`data/samples/meta-results-sample.csv`](data/samples/meta-results-sample.csv)
 on the brief's *Results* tab, then **Re-plan from results**.
 
@@ -271,7 +271,8 @@ flowchart TD
 
 The critic is deterministic first: every claim must cite a Qloo call made in this run, numbers must
 appear in the facts, and protected traits (age, gender, ethnicity, religion, sexuality) are never
-mentioned. Then one model review. A failed critique gets one rewrite; it never fails the run.
+mentioned. After that comes one model review. A failed critique gets one rewrite, and it never fails
+the run.
 
 ## Tech stack
 
@@ -378,14 +379,15 @@ connects as the owner.
 
 ## Responsible use
 
-- **Taste, never traits.** Audiences are built from what people love. Copy never targets or mentions
-  age, gender, ethnicity, religion or sexuality; the critic and the email/Ask guards enforce it.
-- **Safety data is context only.** NYPD incident counts appear only as promoter-side show-night
-  context, as plain counts vs. similar nightlife areas. They never rank or exclude audiences.
-- **Private by default.** A fan's location never leaves the browser. Liked artists and rated shows are
-  stored on the device. Survey answers are anonymous (no name, email or IP stored), audience results
-  appear only from 10 responses, and a fan's rating is shared with an organizer only if they opt in. Outreach drafts never mention ticket sales or budgets, and HouseFull never sends email itself.
-- **Qloo terms.** No Qloo response data is committed; caches live in the private database.
+- Audiences are built from what people like. Copy never targets or mentions age, gender, ethnicity,
+  religion or sexuality, and the critic and the checks on email drafts and Ask answers enforce this.
+- NYPD incident counts appear only as show-night context for promoters, shown as plain counts next to
+  similar nightlife areas. They never rank or exclude audiences.
+- A fan's location never leaves the browser, and liked artists and rated shows are stored on the
+  device. Survey answers are anonymous (no name, email or IP is stored), audience results appear only
+  once there are 10 responses, and a fan's rating reaches an organizer only if the fan opts in.
+- Outreach drafts never mention ticket sales or budgets, and HouseFull never sends email itself.
+- No Qloo response data is committed to the repository; caches live in the private database.
 
 ## Data sources and attribution
 
